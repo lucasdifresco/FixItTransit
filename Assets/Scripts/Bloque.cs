@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class Bloque : MonoBehaviour
 {
-    private static bool EsEdificio(Bloque bloque) { return bloque == null || !bloque.Calle; }
-    private static bool EsCalle(Bloque bloque) { return bloque != null && bloque.Calle; }
+    public static bool EsEdificio(Bloque bloque) { return bloque == null || !bloque.Calle || !bloque.gameObject.activeSelf; }
+    public static bool EsCalle(Bloque bloque) { return bloque != null && bloque.Calle && bloque.gameObject.activeSelf; }
     
     public HojaDeImagenes HojaDeImagenes;
     public SpriteRenderer Imagen;
@@ -14,6 +14,11 @@ public class Bloque : MonoBehaviour
     public Bloque Este { get; set; }
     public Bloque Oeste { get; set; }
     public int CantidadDeCallesLinderas { get { return ((EsEdificio(Norte)) ? 0 : 1) + ((EsEdificio(Sur)) ? 0 : 1) + ((EsEdificio(Este)) ? 0 : 1) + ((EsEdificio(Oeste)) ? 0 : 1); } }
+    public Nodo Nodo { get; set; } = new Nodo();
+    public Bloque[] Vecinos { get { return new Bloque[] { Norte, Este, Sur, Oeste }; } }
+
+    public void Activar() { gameObject.SetActive(true); }
+    public void Desactivar() { gameObject.SetActive(false); }
 
     public void ActualizarImagen() 
     {

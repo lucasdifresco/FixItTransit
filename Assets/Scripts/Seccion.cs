@@ -4,6 +4,8 @@ public class Seccion : MonoBehaviour
 {
     public Cuadrante Prefab;
 
+    public Cuadrante[] Cuadrantes;
+
     public Seccion Norte { get; set; }
     public Seccion Sur { get; set; }
     public Seccion Este { get; set; }
@@ -14,6 +16,25 @@ public class Seccion : MonoBehaviour
     public Cuadrante SO { get; private set; }
     public Cuadrante SE { get; private set; }
 
+    public bool TieneRotonda 
+    {
+        get 
+        {
+            if (NO.SE.Calle && NE.SO.Calle && SE.NO.Calle && SO.NE.Calle) { return true; }
+
+            if (Norte != null) { if (NO.NE.Calle && NE.NO.Calle && Norte.SO.SE.Calle && Norte.SE.SO.Calle) { return true; } }
+            if (Sur != null)   { if (SO.SE.Calle && SE.SO.Calle &&   Sur.NO.NE.Calle &&   Sur.NE.NO.Calle) { return true; } }
+            if (Este != null)  { if (NE.SE.Calle && SE.NE.Calle &&  Este.NO.SO.Calle &&  Este.SO.NO.Calle) { return true; } }
+            if (Oeste != null) { if (NO.SO.Calle && SO.NO.Calle && Oeste.NE.SE.Calle && Oeste.SE.NE.Calle) { return true; } }
+
+            if (Norte != null && Oeste != null && Norte.Oeste != null) { if (NO.NO.Calle && Norte.SO.SO.Calle && Oeste.NE.NE.Calle && Norte.Oeste.SE.SE.Calle) { return true; } }
+            if (Norte != null &&  Este != null && Norte.Este  != null) { if (NE.NE.Calle && Norte.SE.SE.Calle &&  Este.NO.NO.Calle &&  Norte.Este.SO.SO.Calle) { return true; } }
+            if (  Sur != null && Oeste != null &&   Sur.Oeste != null) { if (SO.SO.Calle &&   Sur.NO.NO.Calle && Oeste.SE.SE.Calle &&   Sur.Oeste.NE.NE.Calle) { return true; } }
+            if (  Sur != null &&  Este != null &&   Sur.Este  != null) { if (SE.SE.Calle &&   Sur.NE.NE.Calle &&  Este.SO.SO.Calle &&    Sur.Este.NO.NO.Calle) { return true; } }
+
+            return false; 
+        }
+    }
     private bool TirarMoneda { get { return Random.Range(0f, 1f) >= 0.5f; } }
 
     public void SetSeccion()
@@ -280,15 +301,30 @@ public class Seccion : MonoBehaviour
         if (!Sur.NE.SePuedeExpandirNorte && !Este.SO.SePuedeExpandirOeste) 
         {
             SE.SetCuadrante(5, 7); NE.SetSurEste(7, 8);
-            SO.SetSurEste(5, 6); SO.SetSurEste();
+            SO.SetSurEste(5, 6); NO.SetSurEste();
         }
         else 
         { 
             SE.SetSurEste(5, 7);
             NE.SetSurEste(7);
             SO.SetSurEste(5);
-            SO.SetSurEste();
+            NO.SetSurEste();
         }
+    }
+
+    public void Activar()
+    {
+        if (NO != null) { NO.Activar(); }
+        if (NE != null) { NE.Activar(); }
+        if (SO != null) { SO.Activar(); }
+        if (SE != null) { SE.Activar(); }
+    }
+    public void Desactivar()
+    {
+        if (NO != null) { NO.Desactivar(); }
+        if (NE != null) { NE.Desactivar(); }
+        if (SO != null) { SO.Desactivar(); }
+        if (SE != null) { SE.Desactivar(); }
     }
 
     public void Inicializar() 
@@ -314,6 +350,8 @@ public class Seccion : MonoBehaviour
         SO.Este = SE;
         NE.Oeste = NO;
         SE.Oeste = SO;
+
+        Cuadrantes = new[] { NO, NE, SO, SE };
     }
     public void Posisionar(float desplazamiento = 0) 
     {

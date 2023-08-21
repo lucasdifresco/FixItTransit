@@ -21,6 +21,44 @@ public class Cuadrante : MonoBehaviour
     public bool SePuedeExpandirEste  { get { return NE.Calle || SE.Calle; } }
     public bool SePuedeExpandirOeste { get { return NO.Calle || SO.Calle; } }
 
+    public List<Bloque> Calles { get 
+        {
+            List<Bloque> calles = new();
+            if (NO.Calle) { calles.Add(NO); }
+            if (NE.Calle) { calles.Add(NE); }
+            if (SO.Calle) { calles.Add(SO); }
+            if (SE.Calle) { calles.Add(SE); }
+            return calles;
+        }
+    }
+    public List<Bloque> Edificios
+    {
+        get
+        {
+            List<Bloque> calles = new();
+            if (!NO.Calle) { calles.Add(NO); }
+            if (!NE.Calle) { calles.Add(NE); }
+            if (!SO.Calle) { calles.Add(SO); }
+            if (!SE.Calle) { calles.Add(SE); }
+            return calles;
+        }
+    }
+
+    public void Activar() 
+    {
+        if (NO != null) { NO.Activar(); }
+        if (NE != null) { NE.Activar(); }
+        if (SO != null) { SO.Activar(); }
+        if (SE != null) { SE.Activar(); }
+    }
+    public void Desactivar() 
+    {
+        if (NO != null) { NO.Desactivar(); }
+        if (NE != null) { NE.Desactivar(); }
+        if (SO != null) { SO.Desactivar(); }
+        if (SE != null) { SE.Desactivar(); }
+    }
+
     public void Inicializar()
     {
         NO = Instantiate(Prefab, transform);

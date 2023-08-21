@@ -22,14 +22,6 @@ public class Vehiculo : MonoBehaviour
         if (Transitar) { Transitar = false; TransitarRuta(); }
     }
 
-    private void Awake()
-    {
-        //_ruta = new List<Bloque>();
-    }
-    private void Start()
-    {
-        TransitarRuta();
-    }
     private void Update()
     {
         if (!_enMovimiento) { return; }
@@ -41,7 +33,7 @@ public class Vehiculo : MonoBehaviour
             transform.position = _destino;
             _indice++;
 
-            if (_indice >= _ruta.Count) { _enMovimiento = false; return; }
+            if (_indice >= _ruta.Count) { CaminoTerminado(); return; }
 
             _origen = transform.position;
             _destino = _ruta[_indice].transform.position;
@@ -53,17 +45,29 @@ public class Vehiculo : MonoBehaviour
         Avanzar(_origen, _destino, _temporizador);
     }
 
+    public void Preparar()
+    {
+        _indice = 1;
+        _origen = _ruta[0].transform.position;
+        _destino = _ruta[1].transform.position;
+        Avanzar(_origen, _destino, 0);
+        SetAngle();
+    }
     public void TransitarRuta(List<Bloque> ruta) 
     {
         if (_ruta == null || _ruta.Count <= 2 || _enMovimiento) { return; }
         _ruta = ruta;
-        _indice = 1;
-        _origen = _ruta[0].transform.position;
-        _destino = _ruta[1].transform.position;
-        SetAngle();
+        Preparar();
         _enMovimiento = true;
     }
     public void TransitarRuta() { TransitarRuta(_ruta); }
+
+    public void CaminoTerminado() 
+    {
+        _enMovimiento = false;
+        gameObject.SetActive(false);
+        Destroy(gameObject);
+    }
 
     private void Avanzar(Vector3 origen, Vector3 destino, float progreso) 
     {
