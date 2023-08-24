@@ -21,7 +21,9 @@ public class Cuadrante : MonoBehaviour
     public bool SePuedeExpandirEste  { get { return NE.Calle || SE.Calle; } }
     public bool SePuedeExpandirOeste { get { return NO.Calle || SO.Calle; } }
 
-    public List<Bloque> Calles { get 
+    public List<Bloque> Calles 
+    {
+        get 
         {
             List<Bloque> calles = new();
             if (NO.Calle) { calles.Add(NO); }
@@ -311,6 +313,18 @@ public class Cuadrante : MonoBehaviour
         return true;
     }
 
+    public void GenerarObstaculo(Obstaculo obstaculo) 
+    {
+        List<Bloque> calles = Calles;
+
+        if (obstaculo.EsEscuela) 
+        {
+            List<Bloque> edificios = Edificios;
+            edificios[Random.Range(0, edificios.Count)].GenerarObstaculo(obstaculo);
+            foreach (Bloque calle in calles) { calle.GenerarObstaculo(obstaculo); }
+        }
+        else if (obstaculo.EsPeaton) { calles[Random.Range(0, calles.Count)].GenerarObstaculo(obstaculo); }
+    }
 
     private int ObtenerFormato(List<int> formatosProhibidos)
     {

@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,6 +5,13 @@ public class Mapa : MonoBehaviour
 {
     public Seccion prefab;
     public Vehiculo prefab_vehiculo;
+    
+    public Obstaculo Peaton;
+    public Obstaculo Escuela;
+
+    public Herramienta Senda;
+    public Herramienta Estacionamiento;
+
     public int maxIteraciones = 10;
     public int MinDistanciaDeRuta = 8;
     public bool pintarExtremos = false;
@@ -51,7 +57,35 @@ public class Mapa : MonoBehaviour
         }
     }
 
-    private void CrearMapa()
+    private void Update()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit2D hit = Physics2D.GetRayIntersection(ray);
+            if (hit.collider == null) { return; }
+
+            if (!hit.collider.TryGetComponent<Bloque>(out var bloque)) { return; }
+            if (!bloque.Calle) { return; }
+            bloque.GenerarHerramienta(Senda);
+            bloque.ActualizarImagen();
+        }
+        else if(Input.GetMouseButtonDown(1))
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit2D hit = Physics2D.GetRayIntersection(ray);
+            if (hit.collider == null) { return; }
+
+            if (!hit.collider.TryGetComponent<Bloque>(out var bloque)) { return; }
+            if (!bloque.Calle) { return; }
+            bloque.GenerarHerramienta(Estacionamiento);
+            bloque.ActualizarImagen();
+        }
+    }
+
+    private bool TirarMoneda { get { return Random.Range(0f, 1f) >= 0.5f; } }
+
+    public void CrearMapa()
     {
         Limpiar();
         Instanciar();
@@ -59,8 +93,31 @@ public class Mapa : MonoBehaviour
         Inicializar();
         ActualizarConexiones();
         GenerarSecciones();
+        GenerarObstaculos();
         ActualizarImagenes();
         ActualizarNivel();
+    }
+    public void CrearCamino()
+    {
+        List<Bloque> ruta;
+        int distanciaMinima = MinDistanciaDeRuta;
+        if (nivel == 0) { distanciaMinima = 3; }
+
+        int iteracion = 0;
+        do
+        {
+            ruta = Nodo.CalcularRuta(_norteOeste.NO.NO, ObtenerCalleAleatoria(ultimaSeccion), ObtenerCalleAleatoria(ultimaSeccion));
+            iteracion++;
+        }
+        while ((ruta == null || ruta.Count <= distanciaMinima) && iteracion < maxIteraciones);
+
+        PintarRuta(ruta);
+        if (prefab_vehiculo == null) { print("No hay vehiculo"); return; }
+
+        Vehiculo vehiculo = Instantiate(prefab_vehiculo, transform.position, transform.rotation, transform);
+        vehiculo._ruta = ruta;
+        vehiculo.Preparar();
+        vehiculo.TransitarRuta();
     }
 
     private void Limpiar() 
@@ -171,7 +228,7 @@ public class Mapa : MonoBehaviour
         iteracion = 0; do { _surOeste.SetNorteEste(); iteracion++; } while (_surOeste.TieneRotonda && iteracion < maxIteraciones);
         iteracion = 0; do { _norteEste.SetSurOeste(); iteracion++; } while (_norteEste.TieneRotonda && iteracion < maxIteraciones);
         iteracion = 0; do { _surEste.SetNorteOeste(); iteracion++; } while (_surEste.TieneRotonda && iteracion < maxIteraciones);
-    }   
+    }
     private void ActualizarImagenes()
     {
         _centro.ActualizarImagenes();
@@ -233,32 +290,31 @@ public class Mapa : MonoBehaviour
 
         ActualizarImagenes();
     }
-
-    private void CrearCamino() 
+    
+    private void GenerarObstaculos()
     {
-        List<Bloque> ruta;
-        int distanciaMinima = MinDistanciaDeRuta;
-        if (nivel == 0) { distanciaMinima = 4; }
+        int cuadrante1;
+        int cuadrante2;
+        Cuadrante[] cuadrantes;
 
-        int iteracion = 0;
-        do
+        foreach (Seccion seccion in secciones) 
         {
-            ruta = Nodo.CalcularRuta(_norteOeste.NO.NO, ObtenerCalleAleatoria(ultimaSeccion), ObtenerCalleAleatoria(ultimaSeccion));
-            iteracion++;
+            cuadrantes = seccion.Cuadrantes;
+
+            cuadrante1 = Random.Range(0, 4);
+            cuadrante2 = RandomRange(0, 4, cuadrante1);
+
+            if (cuadrante1 == cuadrante2) { print("Error"); }
+
+            if (TirarMoneda)
+            {
+                seccion.Cuadrantes[cuadrante1].GenerarObstaculo(Peaton);
+                seccion.Cuadrantes[cuadrante2].GenerarObstaculo(Escuela);
+            }
+            else if (TirarMoneda) { seccion.Cuadrantes[cuadrante1].GenerarObstaculo(Peaton); }
+            else { seccion.Cuadrantes[cuadrante2].GenerarObstaculo(Escuela); }
         }
-        while ((ruta == null || ruta.Count <= distanciaMinima) && iteracion < maxIteraciones);
-
-        print($"Ruta: {ruta.Count} - Iteración: {iteracion}");
-
-        PintarRuta(ruta);
-        if (prefab_vehiculo == null) { print("No hay vehiculo"); return; }
-
-        Vehiculo vehiculo = Instantiate(prefab_vehiculo, transform.position, transform.rotation, transform);
-        vehiculo._ruta = ruta;
-        vehiculo.Preparar();
-        vehiculo.TransitarRuta();
     }
-
     private Bloque ObtenerCalleAleatoria(int seccionProhibida = -1) 
     {
         int seccion;
@@ -271,31 +327,13 @@ public class Mapa : MonoBehaviour
         }
         else if (nivel == 1)
         {
-            seccion = Random.Range(0, 5);
+            seccion = RandomRange(0, 5, ultimaSeccion);
             cuadrante = Random.Range(0, 4);
-
-            if (seccionProhibida != -1) 
-            {
-                if (seccion >= seccionProhibida) 
-                {
-                    seccion++;
-                    if (seccion == 5) { seccion = 0; }
-                }
-            }
         }
         else 
         {
-            seccion = Random.Range(0, 9);
+            seccion = RandomRange(0, 9, ultimaSeccion);
             cuadrante = Random.Range(0, 4);
-
-            if (seccionProhibida != -1)
-            {
-                if (seccion >= seccionProhibida)
-                {
-                    seccion++;
-                    if (seccion == 9) { seccion = 0; }
-                }
-            }
         }
 
         ultimaSeccion = seccion;
@@ -317,5 +355,20 @@ public class Mapa : MonoBehaviour
             ruta[0].Imagen.color = Color.red;
             ruta[^1].Imagen.color = Color.green;
         }
+    }
+    private int RandomRange(int min, int max, params int[] indicesParaIgnorar) 
+    {
+        if (min > max) { (min, max) = (max, min); }
+        if (indicesParaIgnorar.Length == max - min) { return 0; }
+
+        int indice = Random.Range(min, max - indicesParaIgnorar.Length);
+
+        foreach (int indiceIgnorado in indicesParaIgnorar)
+        {
+            if (indiceIgnorado == -1) { continue; }
+            if (indice >= indiceIgnorado) { indice++; }
+        }
+
+        return indice;
     }
 }

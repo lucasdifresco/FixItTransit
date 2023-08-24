@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e1b7d238ce5e34e88054ad99290657, type: 3}
+  m_Name: Hoja de Imagenes - Escuela
+  m_EditorClassIdentifier: 
+  SinConexiones: {fileID: -382102398, guid: 6989ea0bb29e15547aae5134e5907d3f, type: 3}
+  O: {fileID: -390530610, guid: 6989ea0bb29e15547aae5134e5907d3f, type: 3}
+  N: {fileID: 1243038330, guid: 6989ea0bb29e15547aae5134e5907d3f, type: 3}
+  E: {fileID: 847612526, guid: 6989ea0bb29e15547aae5134e5907d3f, type: 3}
+  S: {fileID: 696428218, guid: 6989ea0bb29e15547aae5134e5907d3f, type: 3}
+  NO: {fileID: 41396977, guid: 6989ea0bb29e15547aae5134e5907d3f, type: 3}
+  NS: {fileID: 848129346, guid: 6989ea0bb29e15547aae5134e5907d3f, type: 3}
+  NE: {fileID: -492472463, guid: 6989ea0bb29e15547aae5134e5907d3f, type: 3}
+  SE: {fileID: 839068425, guid: 6989ea0bb29e15547aae5134e5907d3f, type: 3}
+  EO: {fileID: -720848254, guid: 6989ea0bb29e15547aae5134e5907d3f, type: 3}
+  SO: {fileID: 784055923, guid: 6989ea0bb29e15547aae5134e5907d3f, type: 3}
+  SON: {fileID: 643339631, guid: 6989ea0bb29e15547aae5134e5907d3f, type: 3}
+  ONE: {fileID: -993043825, guid: 6989ea0bb29e15547aae5134e5907d3f, type: 3}
+  NES: {fileID: -2073479326, guid: 6989ea0bb29e15547aae5134e5907d3f, type: 3}
+  ESO: {fileID: -352791593, guid: 6989ea0bb29e15547aae5134e5907d3f, type: 3}
+  ONES: {fileID: -194103015, guid: 6989ea0bb29e15547aae5134e5907d3f, type: 3}

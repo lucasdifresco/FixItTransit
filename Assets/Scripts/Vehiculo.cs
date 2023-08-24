@@ -31,10 +31,18 @@ public class Vehiculo : MonoBehaviour
         {
             _temporizador = 0;
             transform.position = _destino;
+
+            if (!SePuedeTransitar(_ruta[_indice])) { NoPuedeTransitar(); return; }
+
+
+            if (_indice >= _ruta.Count - 1) 
+            {
+                if (!SePuedeEstacionar(_ruta[_indice])) { NoPuedeEstacionar(); }
+                else { LlegoADestino(); }               
+                return; 
+            }
+
             _indice++;
-
-            if (_indice >= _ruta.Count) { CaminoTerminado(); return; }
-
             _origen = transform.position;
             _destino = _ruta[_indice].transform.position;
             SetAngle();
@@ -62,22 +70,50 @@ public class Vehiculo : MonoBehaviour
     }
     public void TransitarRuta() { TransitarRuta(_ruta); }
 
-    public void CaminoTerminado() 
+
+    private bool SePuedeTransitar(Bloque bloque) 
+    {
+        if (bloque.Obstaculo == null) { return true; }
+        if (!bloque.Obstaculo.EsPeaton) { return true; }
+        if (bloque.Herramienta != null && bloque.Herramienta.EsSenda) { return true; }
+
+        return false; 
+    }
+    private bool SePuedeEstacionar(Bloque bloque) 
+    {
+        if (bloque.Obstaculo == null) { return true; }
+        if (!bloque.Obstaculo.EsEscuela) { return true; }
+        if (bloque.Herramienta != null && bloque.Herramienta.EsProhibidoEstacionar) { return true; }
+
+        return false; 
+    }
+
+    private void NoPuedeTransitar() 
+    {
+        print("No puede Transitar");
+        TerminarRecorrido();
+    }
+    private void NoPuedeEstacionar() 
+    {
+        print("No puede Estacionar");
+        TerminarRecorrido();
+    }
+    private void LlegoADestino() 
+    {
+        print($"Llego a Destino: {_ruta.Count} calles recorridas.");
+        TerminarRecorrido();
+    }
+
+    private void TerminarRecorrido() 
     {
         _enMovimiento = false;
         gameObject.SetActive(false);
         Destroy(gameObject);
     }
-
     private void Avanzar(Vector3 origen, Vector3 destino, float progreso) 
     {
         transform.position = Vector3.Lerp(origen, destino, progreso);
     }
-    private void Girar(Vector3 punto) 
-    {
-        transform.RotateAround(punto, Vector3.forward, 1);
-    }
-
     private void SetAngle() 
     {
         Vector3 direction = _destino - _origen;

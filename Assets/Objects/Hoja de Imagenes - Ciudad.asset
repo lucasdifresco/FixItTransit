@@ -12,19 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20e1b7d238ce5e34e88054ad99290657, type: 3}
   m_Name: Hoja de Imagenes - Ciudad
   m_EditorClassIdentifier: 
-  SinConexiones: {fileID: -377567046, guid: 9c247091d863a5949bf8a9e41153e57f, type: 3}
-  O: {fileID: -493693669, guid: 9c247091d863a5949bf8a9e41153e57f, type: 3}
-  N: {fileID: -1917380851, guid: 9c247091d863a5949bf8a9e41153e57f, type: 3}
-  E: {fileID: -566373191, guid: 9c247091d863a5949bf8a9e41153e57f, type: 3}
-  S: {fileID: 1570412080, guid: 9c247091d863a5949bf8a9e41153e57f, type: 3}
-  NO: {fileID: 500225036, guid: 9c247091d863a5949bf8a9e41153e57f, type: 3}
-  NS: {fileID: 1196056372, guid: 9c247091d863a5949bf8a9e41153e57f, type: 3}
-  NE: {fileID: 869448339, guid: 9c247091d863a5949bf8a9e41153e57f, type: 3}
-  SE: {fileID: 1872639139, guid: 9c247091d863a5949bf8a9e41153e57f, type: 3}
-  EO: {fileID: 178608997, guid: 9c247091d863a5949bf8a9e41153e57f, type: 3}
-  SO: {fileID: -796311763, guid: 9c247091d863a5949bf8a9e41153e57f, type: 3}
-  SON: {fileID: 1520026786, guid: 9c247091d863a5949bf8a9e41153e57f, type: 3}
-  ONE: {fileID: 926821359, guid: 9c247091d863a5949bf8a9e41153e57f, type: 3}
-  NES: {fileID: 28161400, guid: 9c247091d863a5949bf8a9e41153e57f, type: 3}
-  ESO: {fileID: 1068890778, guid: 9c247091d863a5949bf8a9e41153e57f, type: 3}
-  ONES: {fileID: -1686290264, guid: 9c247091d863a5949bf8a9e41153e57f, type: 3}
+  SinConexiones: {fileID: 1962208644, guid: 6df38c55af4847740b6ab3d1de519048, type: 3}
+  O: {fileID: 1554672568, guid: 6df38c55af4847740b6ab3d1de519048, type: 3}
+  N: {fileID: -40559848, guid: 6df38c55af4847740b6ab3d1de519048, type: 3}
+  E: {fileID: 1007496576, guid: 6df38c55af4847740b6ab3d1de519048, type: 3}
+  S: {fileID: 1869853669, guid: 6df38c55af4847740b6ab3d1de519048, type: 3}
+  NO: {fileID: 1162609966, guid: 6df38c55af4847740b6ab3d1de519048, type: 3}
+  NS: {fileID: -233345125, guid: 6df38c55af4847740b6ab3d1de519048, type: 3}
+  NE: {fileID: 88013938, guid: 6df38c55af4847740b6ab3d1de519048, type: 3}
+  SE: {fileID: -1355637237, guid: 6df38c55af4847740b6ab3d1de519048, type: 3}
+  EO: {fileID: 1461626624, guid: 6df38c55af4847740b6ab3d1de519048, type: 3}
+  SO: {fileID: -853242856, guid: 6df38c55af4847740b6ab3d1de519048, type: 3}
+  SON: {fileID: 1412197290, guid: 6df38c55af4847740b6ab3d1de519048, type: 3}
+  ONE: {fileID: -1080304371, guid: 6df38c55af4847740b6ab3d1de519048, type: 3}
+  NES: {fileID: 1286386441, guid: 6df38c55af4847740b6ab3d1de519048, type: 3}
+  ESO: {fileID: -1332073386, guid: 6df38c55af4847740b6ab3d1de519048, type: 3}
+  ONES: {fileID: 1541946453, guid: 6df38c55af4847740b6ab3d1de519048, type: 3}
