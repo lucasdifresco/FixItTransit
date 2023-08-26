@@ -131,5 +131,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   HojaDeImagenes: {fileID: 11400000, guid: f512964e525f33649be900120fe9246e, type: 2}
   Imagen: {fileID: 8691477892699101834}
+  <Multa>k__BackingField: 50
   <EsPeaton>k__BackingField: 0
   <EsEscuela>k__BackingField: 1

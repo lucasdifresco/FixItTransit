@@ -31,7 +31,7 @@ public class Mapa : MonoBehaviour
     private Seccion _norteEste;
     private Seccion _surEste;
 
-    private int nivel = 0;
+    public int Nivel { get; private set; } = 0;
 
     public bool Crear = false;
     public bool siguienteNivel = false;
@@ -51,36 +51,36 @@ public class Mapa : MonoBehaviour
         if (siguienteNivel) 
         {
             siguienteNivel = false; 
-            nivel++;
-            if (nivel > 2) { nivel = 0; }
+            Nivel++;
+            if (Nivel > 2) { Nivel = 0; }
             ActualizarNivel();
         }
     }
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit2D hit = Physics2D.GetRayIntersection(ray);
-            if (hit.collider == null) { return; }
+        //if (Input.GetMouseButtonDown(0))
+        //{
+        //    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        //    RaycastHit2D hit = Physics2D.GetRayIntersection(ray);
+        //    if (hit.collider == null) { return; }
 
-            if (!hit.collider.TryGetComponent<Bloque>(out var bloque)) { return; }
-            if (!bloque.Calle) { return; }
-            bloque.GenerarHerramienta(Senda);
-            bloque.ActualizarImagen();
-        }
-        else if(Input.GetMouseButtonDown(1))
-        {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit2D hit = Physics2D.GetRayIntersection(ray);
-            if (hit.collider == null) { return; }
+        //    if (!hit.collider.TryGetComponent<Bloque>(out var bloque)) { return; }
+        //    if (!bloque.Calle) { return; }
+        //    bloque.GenerarHerramienta(Senda);
+        //    bloque.ActualizarImagen();
+        //}
+        //else if(Input.GetMouseButtonDown(1))
+        //{
+        //    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        //    RaycastHit2D hit = Physics2D.GetRayIntersection(ray);
+        //    if (hit.collider == null) { return; }
 
-            if (!hit.collider.TryGetComponent<Bloque>(out var bloque)) { return; }
-            if (!bloque.Calle) { return; }
-            bloque.GenerarHerramienta(Estacionamiento);
-            bloque.ActualizarImagen();
-        }
+        //    if (!hit.collider.TryGetComponent<Bloque>(out var bloque)) { return; }
+        //    if (!bloque.Calle) { return; }
+        //    bloque.GenerarHerramienta(Estacionamiento);
+        //    bloque.ActualizarImagen();
+        //}
     }
 
     private bool TirarMoneda { get { return Random.Range(0f, 1f) >= 0.5f; } }
@@ -97,11 +97,11 @@ public class Mapa : MonoBehaviour
         ActualizarImagenes();
         ActualizarNivel();
     }
-    public void CrearCamino()
+    public Vehiculo CrearCamino()
     {
         List<Bloque> ruta;
         int distanciaMinima = MinDistanciaDeRuta;
-        if (nivel == 0) { distanciaMinima = 3; }
+        if (Nivel == 0) { distanciaMinima = 3; }
 
         int iteracion = 0;
         do
@@ -112,12 +112,25 @@ public class Mapa : MonoBehaviour
         while ((ruta == null || ruta.Count <= distanciaMinima) && iteracion < maxIteraciones);
 
         PintarRuta(ruta);
-        if (prefab_vehiculo == null) { print("No hay vehiculo"); return; }
+        if (prefab_vehiculo == null) { print("No hay vehiculo"); return null; }
 
         Vehiculo vehiculo = Instantiate(prefab_vehiculo, transform.position, transform.rotation, transform);
         vehiculo._ruta = ruta;
         vehiculo.Preparar();
-        vehiculo.TransitarRuta();
+
+        return vehiculo;
+    }
+    public void ReiniciarNivel()
+    {
+        Nivel = 0;
+        ActualizarNivel();
+    }
+    public bool SiguienteNivel() 
+    {
+        Nivel++;
+        if (Nivel > 2) { return true; }
+        ActualizarNivel();
+        return false;
     }
 
     private void Limpiar() 
@@ -245,7 +258,7 @@ public class Mapa : MonoBehaviour
     }
     private void ActualizarNivel() 
     {
-        if (nivel == 0)
+        if (Nivel == 0)
         {
             if (_centro != null) { _centro.Activar(); }
 
@@ -259,7 +272,7 @@ public class Mapa : MonoBehaviour
             if (_norteEste != null) { _norteEste.Desactivar(); }
             if (_surEste != null) { _surEste.Desactivar(); }
         }
-        else if (nivel == 1) 
+        else if (Nivel == 1) 
         {
             if (_centro != null) { _centro.Activar(); }
 
@@ -273,7 +286,7 @@ public class Mapa : MonoBehaviour
             if (_norteEste != null) { _norteEste.Desactivar(); }
             if (_surEste != null) { _surEste.Desactivar(); }
         }
-        else if (nivel == 2)
+        else if (Nivel == 2)
         {
             if (_centro != null) { _centro.Activar(); }
 
@@ -306,7 +319,8 @@ public class Mapa : MonoBehaviour
 
             if (cuadrante1 == cuadrante2) { print("Error"); }
 
-            if (TirarMoneda)
+            //if (TirarMoneda)
+            if (true)
             {
                 seccion.Cuadrantes[cuadrante1].GenerarObstaculo(Peaton);
                 seccion.Cuadrantes[cuadrante2].GenerarObstaculo(Escuela);
@@ -320,12 +334,12 @@ public class Mapa : MonoBehaviour
         int seccion;
         int cuadrante;
 
-        if (nivel == 0)
+        if (Nivel == 0)
         {
             seccion = 0;
             cuadrante = Random.Range(0, 4);
         }
-        else if (nivel == 1)
+        else if (Nivel == 1)
         {
             seccion = RandomRange(0, 5, ultimaSeccion);
             cuadrante = Random.Range(0, 4);

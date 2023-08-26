@@ -47,6 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   HojaDeImagenes: {fileID: 11400000, guid: 300b3dfac1e929e4baadb3465c0f06d0, type: 2}
   Imagen: {fileID: 6415279150449577721}
+  <Costo>k__BackingField: 50
   <EsSenda>k__BackingField: 0
   <EsProhibidoEstacionar>k__BackingField: 1
 --- !u!1 &6415279150449577726

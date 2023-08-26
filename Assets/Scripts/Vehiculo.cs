@@ -1,11 +1,14 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Vehiculo : MonoBehaviour
 {
     public float Velocidad;
-    public Transform EsquinaDerecha;
-    public Transform EsquinaIzquierda;
+    public Action<bool> OnRecorridoTerminado;
+    public TextPopUpManager GananciaPopUp;
+    public TextPopUpManager MultaPopUp;
+
 
     public List<Bloque> _ruta;
     private bool _enMovimiento = false;
@@ -15,6 +18,7 @@ public class Vehiculo : MonoBehaviour
 
     private float _temporizador;
     private float DeltaTime { get { return Time.deltaTime * Velocidad; } }
+    public Bloque BloqueActual { get { return _ruta[_indice]; } }
 
     public bool Transitar;
     private void OnValidate()
@@ -90,23 +94,21 @@ public class Vehiculo : MonoBehaviour
 
     private void NoPuedeTransitar() 
     {
-        print("No puede Transitar");
-        TerminarRecorrido();
+        TerminarRecorrido(false);
     }
     private void NoPuedeEstacionar() 
     {
-        print("No puede Estacionar");
-        TerminarRecorrido();
+        TerminarRecorrido(false);
     }
     private void LlegoADestino() 
     {
-        print($"Llego a Destino: {_ruta.Count} calles recorridas.");
-        TerminarRecorrido();
+        TerminarRecorrido(true);
     }
 
-    private void TerminarRecorrido() 
+    private void TerminarRecorrido(bool llegoADestino) 
     {
         _enMovimiento = false;
+        OnRecorridoTerminado?.Invoke(llegoADestino);
         gameObject.SetActive(false);
         Destroy(gameObject);
     }

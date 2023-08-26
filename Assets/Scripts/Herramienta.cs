@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Herramienta : MonoBehaviour
@@ -7,6 +5,7 @@ public class Herramienta : MonoBehaviour
     public HojaDeImagenes HojaDeImagenes;
     public SpriteRenderer Imagen;
 
+    [field: SerializeField] public int Costo { get; private set; } = 10;
     [field: SerializeField] public bool EsSenda { get; set; }
     [field: SerializeField] public bool EsProhibidoEstacionar { get; set; }
 

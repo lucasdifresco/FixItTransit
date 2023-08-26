@@ -5,6 +5,7 @@ public class Obstaculo : MonoBehaviour
     public HojaDeImagenes HojaDeImagenes;
     public SpriteRenderer Imagen;
 
+    [field: SerializeField] public int Multa { get; private set; } = 10;
     [field: SerializeField] public bool EsPeaton { get; set; }
     [field: SerializeField] public bool EsEscuela { get; set; }
 
