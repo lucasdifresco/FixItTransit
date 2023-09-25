@@ -2,16 +2,15 @@ using UnityEngine;
 
 public class Herramienta : MonoBehaviour
 {
-    public HojaDeImagenes HojaDeImagenes;
-    public SpriteRenderer Imagen;
+    public enum HERRAMIENTA { Senda, Estacionar }
+
+    [SerializeField] private HojaDeImagenes HojaDeImagenes;
+    [SerializeField] private SpriteRenderer Imagen;
 
     [field: SerializeField] public int Costo { get; private set; } = 10;
-    [field: SerializeField] public bool EsSenda { get; set; }
-    [field: SerializeField] public bool EsProhibidoEstacionar { get; set; }
-
+    [field: SerializeField] public HERRAMIENTA Tipo { get; private set; }
     public void Activar() { gameObject.SetActive(true); }
     public void Desactivar() { gameObject.SetActive(false); }
-
     public void ActualizarImagen(int idImagen)
     {
         if (idImagen == 0) { if (HojaDeImagenes.SinConexiones == null) { return; } Imagen.sprite = HojaDeImagenes.SinConexiones; }

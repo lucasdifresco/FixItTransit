@@ -44,4 +44,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7751fc4b06f025d49a0b802f5307a720, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Prefab: {fileID: 1546060814716197947, guid: fc54849e55f59c74793a1e3b56b1ef2f, type: 3}
+  _cuadrante: {fileID: 1546060814716197947, guid: fc54849e55f59c74793a1e3b56b1ef2f, type: 3}
+  Cuadrantes: []

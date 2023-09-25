@@ -2,9 +2,9 @@ using UnityEngine;
 
 public class Seccion : MonoBehaviour
 {
-    public Cuadrante Prefab;
+    [SerializeField] private Cuadrante _cuadrante;
 
-    public Cuadrante[] Cuadrantes;
+    public Cuadrante[] Cuadrantes { get; private set; }
 
     public Seccion Norte { get; set; }
     public Seccion Sur { get; set; }
@@ -16,27 +16,27 @@ public class Seccion : MonoBehaviour
     public Cuadrante SO { get; private set; }
     public Cuadrante SE { get; private set; }
 
-    public bool TieneRotonda 
+    private bool TirarMoneda { get { return Random.Range(0f, 1f) >= 0.5f; } }
+
+    public bool TieneRotonda
     {
-        get 
+        get
         {
             if (NO.SE.Calle && NE.SO.Calle && SE.NO.Calle && SO.NE.Calle) { return true; }
 
             if (Norte != null) { if (NO.NE.Calle && NE.NO.Calle && Norte.SO.SE.Calle && Norte.SE.SO.Calle) { return true; } }
-            if (Sur != null)   { if (SO.SE.Calle && SE.SO.Calle &&   Sur.NO.NE.Calle &&   Sur.NE.NO.Calle) { return true; } }
-            if (Este != null)  { if (NE.SE.Calle && SE.NE.Calle &&  Este.NO.SO.Calle &&  Este.SO.NO.Calle) { return true; } }
+            if (Sur != null) { if (SO.SE.Calle && SE.SO.Calle && Sur.NO.NE.Calle && Sur.NE.NO.Calle) { return true; } }
+            if (Este != null) { if (NE.SE.Calle && SE.NE.Calle && Este.NO.SO.Calle && Este.SO.NO.Calle) { return true; } }
             if (Oeste != null) { if (NO.SO.Calle && SO.NO.Calle && Oeste.NE.SE.Calle && Oeste.SE.NE.Calle) { return true; } }
 
             if (Norte != null && Oeste != null && Norte.Oeste != null) { if (NO.NO.Calle && Norte.SO.SO.Calle && Oeste.NE.NE.Calle && Norte.Oeste.SE.SE.Calle) { return true; } }
-            if (Norte != null &&  Este != null && Norte.Este  != null) { if (NE.NE.Calle && Norte.SE.SE.Calle &&  Este.NO.NO.Calle &&  Norte.Este.SO.SO.Calle) { return true; } }
-            if (  Sur != null && Oeste != null &&   Sur.Oeste != null) { if (SO.SO.Calle &&   Sur.NO.NO.Calle && Oeste.SE.SE.Calle &&   Sur.Oeste.NE.NE.Calle) { return true; } }
-            if (  Sur != null &&  Este != null &&   Sur.Este  != null) { if (SE.SE.Calle &&   Sur.NE.NE.Calle &&  Este.SO.SO.Calle &&    Sur.Este.NO.NO.Calle) { return true; } }
+            if (Norte != null && Este != null && Norte.Este != null) { if (NE.NE.Calle && Norte.SE.SE.Calle && Este.NO.NO.Calle && Norte.Este.SO.SO.Calle) { return true; } }
+            if (Sur != null && Oeste != null && Sur.Oeste != null) { if (SO.SO.Calle && Sur.NO.NO.Calle && Oeste.SE.SE.Calle && Sur.Oeste.NE.NE.Calle) { return true; } }
+            if (Sur != null && Este != null && Sur.Este != null) { if (SE.SE.Calle && Sur.NE.NE.Calle && Este.SO.SO.Calle && Sur.Este.NO.NO.Calle) { return true; } }
 
-            return false; 
+            return false;
         }
     }
-    private bool TirarMoneda { get { return Random.Range(0f, 1f) >= 0.5f; } }
-
     public void SetSeccion()
     {
         int index = Random.Range(1, 13);
@@ -329,10 +329,10 @@ public class Seccion : MonoBehaviour
 
     public void Inicializar() 
     {
-        NO = Instantiate(Prefab, transform);
-        NE = Instantiate(Prefab, transform);
-        SO = Instantiate(Prefab, transform);
-        SE = Instantiate(Prefab, transform);
+        NO = Instantiate(_cuadrante, transform);
+        NE = Instantiate(_cuadrante, transform);
+        SO = Instantiate(_cuadrante, transform);
+        SE = Instantiate(_cuadrante, transform);
 
         Posisionar();
 
@@ -352,13 +352,6 @@ public class Seccion : MonoBehaviour
         SE.Oeste = SO;
 
         Cuadrantes = new[] { NO, NE, SO, SE };
-    }
-    public void Posisionar(float desplazamiento = 0) 
-    {
-        NO.transform.position = transform.position + new Vector3(-1 - desplazamiento,  1 + desplazamiento, 0);
-        NE.transform.position = transform.position + new Vector3( 1 + desplazamiento,  1 + desplazamiento, 0);
-        SO.transform.position = transform.position + new Vector3(-1 - desplazamiento, -1 - desplazamiento, 0);
-        SE.transform.position = transform.position + new Vector3( 1 + desplazamiento, -1 - desplazamiento, 0);
     }
     public void ActualizarConexiones()
     {
@@ -394,5 +387,13 @@ public class Seccion : MonoBehaviour
         NE.ActualizarImagenes();
         SO.ActualizarImagenes();
         SE.ActualizarImagenes();
+    }
+
+    private void Posisionar(float desplazamiento = 0)
+    {
+        NO.transform.position = transform.position + new Vector3(-1 - desplazamiento, 1 + desplazamiento, 0);
+        NE.transform.position = transform.position + new Vector3(1 + desplazamiento, 1 + desplazamiento, 0);
+        SO.transform.position = transform.position + new Vector3(-1 - desplazamiento, -1 - desplazamiento, 0);
+        SE.transform.position = transform.position + new Vector3(1 + desplazamiento, -1 - desplazamiento, 0);
     }
 }

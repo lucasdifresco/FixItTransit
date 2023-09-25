@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Cuadrante : MonoBehaviour
 {
-    public Bloque Prefab;
+    [SerializeField] private Bloque _bloque;
 
     public Cuadrante Norte { get; set; }
     public Cuadrante Sur   { get; set; }
@@ -60,13 +60,12 @@ public class Cuadrante : MonoBehaviour
         if (SO != null) { SO.Desactivar(); }
         if (SE != null) { SE.Desactivar(); }
     }
-
     public void Inicializar()
     {
-        NO = Instantiate(Prefab, transform);
-        NE = Instantiate(Prefab, transform);
-        SO = Instantiate(Prefab, transform);
-        SE = Instantiate(Prefab, transform);
+        NO = Instantiate(_bloque, transform);
+        NE = Instantiate(_bloque, transform);
+        SO = Instantiate(_bloque, transform);
+        SE = Instantiate(_bloque, transform);
 
         Posicionar();
 
@@ -79,13 +78,6 @@ public class Cuadrante : MonoBehaviour
         SO.Este = SE;
         NE.Oeste = NO;
         SE.Oeste = SO;
-    }
-    public void Posicionar(float desplazamiento = 0) 
-    {
-        NO.transform.position = transform.position + new Vector3(-.5f - desplazamiento,  .5f + desplazamiento, 0);
-        NE.transform.position = transform.position + new Vector3( .5f + desplazamiento,  .5f + desplazamiento, 0);
-        SO.transform.position = transform.position + new Vector3(-.5f - desplazamiento, -.5f - desplazamiento, 0);
-        SE.transform.position = transform.position + new Vector3( .5f + desplazamiento, -.5f - desplazamiento, 0);
     }
     public void ActualizarConexiones() 
     {
@@ -118,7 +110,6 @@ public class Cuadrante : MonoBehaviour
         if (SE != null) { SE.ActualizarImagen(); }
     }
     public void SetCuadrante(params int[] formatosProhibidos) { SetFormato(formatosProhibidos.ToList()); }
-
     public bool SetNorte(params int[] formatosProhibidos)
     {
         if (Norte == null) { return false; }
@@ -183,7 +174,6 @@ public class Cuadrante : MonoBehaviour
         SetFormato(listaFormatosProhibidos);
         return true;
     }
-    
     public bool SetNorteOeste(params int[] formatosProhibidos)
     {
         if (Norte == null || Oeste == null) { return false; }
@@ -312,20 +302,26 @@ public class Cuadrante : MonoBehaviour
         SetFormato(listaFormatosProhibidos);
         return true;
     }
-
     public void GenerarObstaculo(Obstaculo obstaculo) 
     {
         List<Bloque> calles = Calles;
 
-        if (obstaculo.EsEscuela) 
+        if (obstaculo.Tipo == Obstaculo.OBSTACULO.Escuela) 
         {
             List<Bloque> edificios = Edificios;
             edificios[Random.Range(0, edificios.Count)].GenerarObstaculo(obstaculo);
             foreach (Bloque calle in calles) { calle.GenerarObstaculo(obstaculo); }
         }
-        else if (obstaculo.EsPeaton) { calles[Random.Range(0, calles.Count)].GenerarObstaculo(obstaculo); }
+        else if (obstaculo.Tipo == Obstaculo.OBSTACULO.Peaton) { calles[Random.Range(0, calles.Count)].GenerarObstaculo(obstaculo); }
     }
 
+    private void Posicionar(float desplazamiento = 0)
+    {
+        NO.transform.position = transform.position + new Vector3(-.5f - desplazamiento, .5f + desplazamiento, 0);
+        NE.transform.position = transform.position + new Vector3(.5f + desplazamiento, .5f + desplazamiento, 0);
+        SO.transform.position = transform.position + new Vector3(-.5f - desplazamiento, -.5f - desplazamiento, 0);
+        SE.transform.position = transform.position + new Vector3(.5f + desplazamiento, -.5f - desplazamiento, 0);
+    }
     private int ObtenerFormato(List<int> formatosProhibidos)
     {
         List<int> formatos = new() { 1, 2, 3, 4, 5, 6, 7, 8 };

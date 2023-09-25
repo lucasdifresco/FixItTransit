@@ -70,6 +70,7 @@ public class Nodo
 
         return bloqueMasBarato;
     }
+
     private static void InicializarNodos(Bloque origen)
     {
         Bloque fila = origen;
@@ -89,8 +90,6 @@ public class Nodo
                 columna.Nodo.H = 0;
                 columna.Nodo.Anterior = null;
 
-                columna.Imagen.color = Color.white;
-
                 x++;
                 columna = columna.Este;
             }
@@ -100,7 +99,6 @@ public class Nodo
             columna = fila;
         }
     }
-
     private static List<Bloque> GenerarRutaDesdeElDestino(Bloque destino)
     {
         List<Bloque> ruta = new() { destino };

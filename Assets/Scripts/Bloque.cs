@@ -4,18 +4,21 @@ public class Bloque : MonoBehaviour
 {
     public static bool EsEdificio(Bloque bloque) { return bloque == null || !bloque.Calle || !bloque.gameObject.activeSelf; }
     public static bool EsCalle(Bloque bloque) { return bloque != null && bloque.Calle && bloque.gameObject.activeSelf; }
-    
-    public HojaDeImagenes HojaDeImagenes;
-    public SpriteRenderer Imagen;
+
+    [SerializeField] private HojaDeImagenes HojaDeImagenes;
+    [SerializeField] private SpriteRenderer Imagen;
 
     public bool Calle { get; set; }
     public Bloque Norte { get; set; }
     public Bloque Sur { get; set; }
     public Bloque Este { get; set; }
     public Bloque Oeste { get; set; }
-    
-    public int CantidadDeCallesLinderas { get { return ((EsEdificio(Norte)) ? 0 : 1) + ((EsEdificio(Sur)) ? 0 : 1) + ((EsEdificio(Este)) ? 0 : 1) + ((EsEdificio(Oeste)) ? 0 : 1); } }
-    public int ObtenerIdImagen
+    public Nodo Nodo { get; set; } = new Nodo();
+    public Obstaculo Obstaculo { get; set; }
+    public Herramienta Herramienta { get; set; }
+
+    private int CantidadDeCallesLinderas { get { return ((EsEdificio(Norte)) ? 0 : 1) + ((EsEdificio(Sur)) ? 0 : 1) + ((EsEdificio(Este)) ? 0 : 1) + ((EsEdificio(Oeste)) ? 0 : 1); } }
+    private int ObtenerIdImagen
     {
         get
         {
@@ -49,15 +52,9 @@ public class Bloque : MonoBehaviour
 
             return 0;
         }
-    }
+    }    
+
     public Bloque[] Vecinos { get { return new Bloque[] { Norte, Este, Sur, Oeste }; } }
-
-    public Nodo Nodo { get; set; } = new Nodo();
-    
-    public Obstaculo Obstaculo { get; set; }
-    public Herramienta Herramienta { get; set; }
-
-
     public void Activar() { gameObject.SetActive(true); if (Obstaculo != null) { Obstaculo.Activar(); } }
     public void Desactivar() { gameObject.SetActive(false); if (Obstaculo != null) { Obstaculo.Desactivar(); } }
 

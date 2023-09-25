@@ -2,16 +2,15 @@ using UnityEngine;
 
 public class Obstaculo : MonoBehaviour
 {
-    public HojaDeImagenes HojaDeImagenes;
-    public SpriteRenderer Imagen;
+    public enum OBSTACULO { Peaton, Escuela }
+
+    [SerializeField] private HojaDeImagenes HojaDeImagenes;
+    [SerializeField] private SpriteRenderer Imagen;
 
     [field: SerializeField] public int Multa { get; private set; } = 10;
-    [field: SerializeField] public bool EsPeaton { get; set; }
-    [field: SerializeField] public bool EsEscuela { get; set; }
-
+    [field: SerializeField] public OBSTACULO Tipo { get; private set; }
     public void Activar() { gameObject.SetActive(true); }
     public void Desactivar() { gameObject.SetActive(false); }
-
     public void ActualizarImagen(int idImagen)
     {
              if (idImagen ==  0) { if (HojaDeImagenes.SinConexiones == null) { return; } Imagen.sprite = HojaDeImagenes.SinConexiones; }
