@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 
 public class TextPopUpController : MonoBehaviour
@@ -8,6 +9,7 @@ public class TextPopUpController : MonoBehaviour
     [SerializeField] private float _lifespan;
     [SerializeField] private float _distance;
     [SerializeField] private TMP_Text _component;
+    [SerializeField] private Image _image;
 
     private float _timer = 0;
     private float _progress = 0;
@@ -18,6 +20,7 @@ public class TextPopUpController : MonoBehaviour
     private void Awake()
     {
         if (_component == null) { _component = gameObject.GetComponent<TMP_Text>(); }
+        if (_image == null) { _image = gameObject.GetComponent<Image>(); }
     }
     private void Start()
     {
@@ -34,10 +37,8 @@ public class TextPopUpController : MonoBehaviour
         _progress = _timer / _lifespan;
 
         transform.position = _initialPosition + (_direction * _progress);
-        if (_component != null)
-        {
-            _component.color = new Color(_component.color.r, _component.color.g, _component.color.b, 1 - _progress);
-        }
+        if (_component != null) { _component.color = new Color(_component.color.r, _component.color.g, _component.color.b, 1 - _progress); }
+        if (_image != null) { _image.color = new Color(_image.color.r, _image.color.g, _image.color.b, 1 - _progress); }
     }
 
     public void SetText(string text) 

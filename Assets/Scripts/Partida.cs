@@ -9,6 +9,7 @@ public class Partida : MonoBehaviour
     [SerializeField] private Cuestionario _cuestionario;
 
     [SerializeField] private int _bonoPorCiudad = 300;
+    [SerializeField] private int _puntosIniciales = 300;
     [SerializeField] private int _seguridadMaxNivel0 = 3;
     [SerializeField] private int _seguridadMaxNivel1 = 5;
     [SerializeField] private int _seguridadMaxNivel2 = 5;
@@ -28,6 +29,7 @@ public class Partida : MonoBehaviour
 
     [SerializeField] private GameObject BotonNuevoDia;
     [SerializeField] private GameObject BotonPregunta;
+    [SerializeField] private Marcador MarcadorDeOrigen;
 
     [SerializeField] private TextPopUpManager CostoPopUp;
     [SerializeField] private TextPopUpManager BonoPopUp;
@@ -48,6 +50,8 @@ public class Partida : MonoBehaviour
         }
     }
 
+    private Bloque _origen;
+
     private void Awake() { _cuestionario.Inicializar(); }
     private void Update()
     {
@@ -62,21 +66,24 @@ public class Partida : MonoBehaviour
         Pausa = false;
         Transitando = false;
         _dia = 0;
-        _puntos = 100;
+        _puntos = _puntosIniciales;
         _incidentes = 0;
         _seguridad = 0;
         _ciudad.CrearCiudad();
         _ciudad.ReiniciarNivel();
         ActualizarTextos();
+        _origen = _ciudad.ObtenerCalleAleatoria();
+        MarcadorDeOrigen.Posicionar(_origen);
     }
     public void CrearNuevoMapa()
     {
         Pausa = false;
         Transitando = false;
-        //_incidentes = 0;
         _seguridad = 0;
         _ciudad.CrearCiudad();
         ActualizarTextos();
+        _origen = _ciudad.ObtenerCalleAleatoria();
+        MarcadorDeOrigen.Posicionar(_origen);
     }
     public void NuevoDía()
     {
@@ -94,7 +101,8 @@ public class Partida : MonoBehaviour
         
         if (_vehiculo == null) { print("No hay vehiculo"); return; }
         Vehiculo vehiculo = Instantiate(_vehiculo, transform.position, transform.rotation, transform);
-        vehiculo.TransitarRuta(_ciudad.CrearRuta(), VerificarRecorrido);
+        //vehiculo.TransitarRuta(_ciudad.CrearRuta(), VerificarRecorrido);
+        vehiculo.TransitarRuta(_ciudad.CrearRuta(_origen), VerificarRecorrido);
 
         ActualizarTextos();
         Transitando = true;
@@ -121,13 +129,16 @@ public class Partida : MonoBehaviour
             BonoPopUp.GetInstance(vehiculo.transform.position).GetComponent<TextPopUpController>().SetText($"${vehiculo.LongitudRuta * 10}");
             _seguridad++;
 
+            _origen = vehiculo.BloqueActual;
+            MarcadorDeOrigen.Posicionar(_origen);
+
             if (_seguridad >= SeguridadNivel)
             {
                 if (_ciudad.SiguienteNivel())
                 {
                     Pausa = true;
 
-                    if (_ciudad.Nivel >= 2)
+                    if (_ciudad.Nivel >= 2 || _ciudad.Nivel == -1)
                     {
                         _puntos += _bonoPorCiudad;
                         BonoPopUp.GetInstance().GetComponent<TextPopUpController>().SetText($"${_bonoPorCiudad}");
@@ -164,7 +175,12 @@ public class Partida : MonoBehaviour
         if (!bloque.Calle) { return; }
         if (bloque.Herramienta != null && bloque.Herramienta.Tipo == _herramienta.Tipo) { return; }
 
-        if (_herramienta.Costo > _puntos) { print($"{_herramienta.name}: {_herramienta.Costo} --> Puntos Actuales: {_puntos}"); return; }
+        if (_herramienta.Tipo == Herramienta.HERRAMIENTA.Senda && (bloque.Obstaculo == null || bloque.Obstaculo.Tipo != Obstaculo.OBSTACULO.Peaton)) { print("Las Sendas Peatonales solo pueden ubicarse sobre peatones."); return; }
+        if (_herramienta.Tipo == Herramienta.HERRAMIENTA.Estacionar && (bloque.Obstaculo == null || bloque.Obstaculo.Tipo != Obstaculo.OBSTACULO.Escuela)) { print("Solo se pueden crear en las escuelas."); return; }
+        if (_herramienta.Tipo == Herramienta.HERRAMIENTA.Loma && bloque.Obstaculo != null) { print("La loma de burro solo se puede crear en las calles vacías."); return; }
+        if (_herramienta.Tipo == Herramienta.HERRAMIENTA.Semaforo && bloque.Obstaculo != null && bloque.Obstaculo.Tipo != Obstaculo.OBSTACULO.Peaton) { print("El semáforo solo se puede crear en las calles vacías o con peatones."); return; }
+
+        if (_herramienta.Costo > _puntos) { print($"Fondos Insuficientes {_herramienta.name}: {_herramienta.Costo} --> Puntos Actuales: {_puntos}"); return; }
         _puntos -= _herramienta.Costo;
         bloque.GenerarHerramienta(_herramienta);
         bloque.ActualizarImagen();

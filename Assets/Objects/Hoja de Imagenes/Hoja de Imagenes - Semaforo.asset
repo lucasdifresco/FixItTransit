@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e1b7d238ce5e34e88054ad99290657, type: 3}
+  m_Name: Hoja de Imagenes - Semaforo
+  m_EditorClassIdentifier: 
+  SinConexiones: {fileID: -1172689782, guid: dc59250e62531a343818a8626b28d8bb, type: 3}
+  O: {fileID: 1623030274, guid: 298a049ea5ba9d34ea274bb6c65622a2, type: 3}
+  N: {fileID: 1338218440, guid: 298a049ea5ba9d34ea274bb6c65622a2, type: 3}
+  E: {fileID: -1825802696, guid: 298a049ea5ba9d34ea274bb6c65622a2, type: 3}
+  S: {fileID: -879060048, guid: 298a049ea5ba9d34ea274bb6c65622a2, type: 3}
+  NO: {fileID: 1400869373, guid: 298a049ea5ba9d34ea274bb6c65622a2, type: 3}
+  NS: {fileID: 1216532169, guid: 298a049ea5ba9d34ea274bb6c65622a2, type: 3}
+  NE: {fileID: -130500515, guid: 298a049ea5ba9d34ea274bb6c65622a2, type: 3}
+  SE: {fileID: 449282756, guid: 298a049ea5ba9d34ea274bb6c65622a2, type: 3}
+  EO: {fileID: 1249239904, guid: 298a049ea5ba9d34ea274bb6c65622a2, type: 3}
+  SO: {fileID: -227768408, guid: 298a049ea5ba9d34ea274bb6c65622a2, type: 3}
+  SON: {fileID: -851345752, guid: 298a049ea5ba9d34ea274bb6c65622a2, type: 3}
+  ONE: {fileID: -660897664, guid: 298a049ea5ba9d34ea274bb6c65622a2, type: 3}
+  NES: {fileID: 2127562118, guid: 298a049ea5ba9d34ea274bb6c65622a2, type: 3}
+  ESO: {fileID: -146977181, guid: 298a049ea5ba9d34ea274bb6c65622a2, type: 3}
+  ONES: {fileID: -430205922, guid: 298a049ea5ba9d34ea274bb6c65622a2, type: 3}

@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Herramienta : MonoBehaviour
 {
-    public enum HERRAMIENTA { Senda, Estacionar }
+    public enum HERRAMIENTA { Senda, Estacionar, Loma, Semaforo }
 
     [SerializeField] private HojaDeImagenes HojaDeImagenes;
     [SerializeField] private SpriteRenderer Imagen;

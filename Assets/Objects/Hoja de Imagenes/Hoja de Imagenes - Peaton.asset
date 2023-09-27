@@ -12,19 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20e1b7d238ce5e34e88054ad99290657, type: 3}
   m_Name: Hoja de Imagenes - Peaton
   m_EditorClassIdentifier: 
-  SinConexiones: {fileID: 1120216832, guid: 9c247091d863a5949bf8a9e41153e57f, type: 3}
-  O: {fileID: 1120216832, guid: 9c247091d863a5949bf8a9e41153e57f, type: 3}
-  N: {fileID: 1120216832, guid: 9c247091d863a5949bf8a9e41153e57f, type: 3}
-  E: {fileID: 1120216832, guid: 9c247091d863a5949bf8a9e41153e57f, type: 3}
-  S: {fileID: 1120216832, guid: 9c247091d863a5949bf8a9e41153e57f, type: 3}
-  NO: {fileID: 1120216832, guid: 9c247091d863a5949bf8a9e41153e57f, type: 3}
-  NS: {fileID: 1120216832, guid: 9c247091d863a5949bf8a9e41153e57f, type: 3}
-  NE: {fileID: 1120216832, guid: 9c247091d863a5949bf8a9e41153e57f, type: 3}
-  SE: {fileID: 1120216832, guid: 9c247091d863a5949bf8a9e41153e57f, type: 3}
-  EO: {fileID: 1120216832, guid: 9c247091d863a5949bf8a9e41153e57f, type: 3}
-  SO: {fileID: 1120216832, guid: 9c247091d863a5949bf8a9e41153e57f, type: 3}
-  SON: {fileID: 1120216832, guid: 9c247091d863a5949bf8a9e41153e57f, type: 3}
-  ONE: {fileID: 1120216832, guid: 9c247091d863a5949bf8a9e41153e57f, type: 3}
-  NES: {fileID: 1120216832, guid: 9c247091d863a5949bf8a9e41153e57f, type: 3}
-  ESO: {fileID: 1120216832, guid: 9c247091d863a5949bf8a9e41153e57f, type: 3}
-  ONES: {fileID: 1120216832, guid: 9c247091d863a5949bf8a9e41153e57f, type: 3}
+  SinConexiones: {fileID: 258137233, guid: 557da790bd9355241b241623387b67f2, type: 3}
+  O: {fileID: 258137233, guid: 557da790bd9355241b241623387b67f2, type: 3}
+  N: {fileID: 258137233, guid: 557da790bd9355241b241623387b67f2, type: 3}
+  E: {fileID: 258137233, guid: 557da790bd9355241b241623387b67f2, type: 3}
+  S: {fileID: 258137233, guid: 557da790bd9355241b241623387b67f2, type: 3}
+  NO: {fileID: 258137233, guid: 557da790bd9355241b241623387b67f2, type: 3}
+  NS: {fileID: 258137233, guid: 557da790bd9355241b241623387b67f2, type: 3}
+  NE: {fileID: 258137233, guid: 557da790bd9355241b241623387b67f2, type: 3}
+  SE: {fileID: 258137233, guid: 557da790bd9355241b241623387b67f2, type: 3}
+  EO: {fileID: 258137233, guid: 557da790bd9355241b241623387b67f2, type: 3}
+  SO: {fileID: 258137233, guid: 557da790bd9355241b241623387b67f2, type: 3}
+  SON: {fileID: 258137233, guid: 557da790bd9355241b241623387b67f2, type: 3}
+  ONE: {fileID: 258137233, guid: 557da790bd9355241b241623387b67f2, type: 3}
+  NES: {fileID: 258137233, guid: 557da790bd9355241b241623387b67f2, type: 3}
+  ESO: {fileID: 258137233, guid: 557da790bd9355241b241623387b67f2, type: 3}
+  ONES: {fileID: 258137233, guid: 557da790bd9355241b241623387b67f2, type: 3}

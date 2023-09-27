@@ -4,8 +4,13 @@ using UnityEngine;
 
 public class Vehiculo : MonoBehaviour
 {
-    [SerializeField] private float Velocidad;
+    [SerializeField] private float VelocidadBaja = 2;
+    [SerializeField] private float VelocidadAlta = 4;
+    [SerializeField] private float VelocidadMax = 4;
+    [SerializeField] private GameObject ImagenVelocidadBaja;
+    [SerializeField] private GameObject ImagenVelocidadAlta;
 
+    private float _velocidad;
     private Action<Vehiculo, bool> OnRecorridoTerminado;
     private List<Bloque> _ruta;
     private bool _enMovimiento = false;
@@ -13,16 +18,41 @@ public class Vehiculo : MonoBehaviour
     private Vector3 _origen;
     private Vector3 _destino;
     private float _temporizador;
-    private float DeltaTime { get { return Time.deltaTime * Velocidad; } }
+    private bool _velocidadActualizada = false;
+    private float DeltaTime { get { return Time.deltaTime * ((_velocidad == VelocidadMax)? VelocidadAlta : VelocidadBaja); } }
     
     private void Update()
     {
         if (!_enMovimiento) { return; }
         _temporizador += DeltaTime;
 
-        if (_temporizador >= 1) 
+        if (_temporizador + 0.5f >= 1 && !_velocidadActualizada) 
+        {
+            _velocidadActualizada = true;
+
+            if (_velocidad < VelocidadMax) { _velocidad++; }
+
+            if (_ruta[_indice].Herramienta != null && _ruta[_indice].Herramienta.Tipo == Herramienta.HERRAMIENTA.Senda) { _velocidad -= 1; }
+            if (_ruta[_indice].Herramienta != null && _ruta[_indice].Herramienta.Tipo == Herramienta.HERRAMIENTA.Loma) { _velocidad -= 3; }
+            if (_ruta[_indice].Herramienta != null && _ruta[_indice].Herramienta.Tipo == Herramienta.HERRAMIENTA.Semaforo) { _velocidad -= 5; }
+
+            if (_velocidad < VelocidadMax)
+            {
+                ImagenVelocidadBaja.SetActive(true);
+                ImagenVelocidadAlta.SetActive(false);
+            }
+            else
+            {
+                ImagenVelocidadBaja.SetActive(false);
+                ImagenVelocidadAlta.SetActive(true);
+            }
+        }
+
+        if (_temporizador >= 1)
         {
             _temporizador = 0;
+            _velocidadActualizada = false;
+
             transform.position = _destino;
 
             if (!SePuedeTransitar(_ruta[_indice])) { NoPuedeTransitar(); return; }
@@ -60,6 +90,7 @@ public class Vehiculo : MonoBehaviour
     private void Preparar()
     {
         _indice = 1;
+        _velocidad = 1;
         _origen = _ruta[0].transform.position;
         _destino = _ruta[1].transform.position;
         Avanzar(_origen, _destino, 0);
@@ -69,7 +100,7 @@ public class Vehiculo : MonoBehaviour
     {
         if (bloque.Obstaculo == null) { return true; }
         if (bloque.Obstaculo.Tipo != Obstaculo.OBSTACULO.Peaton) { return true; }
-        if (bloque.Herramienta != null && bloque.Herramienta.Tipo == Herramienta.HERRAMIENTA.Senda) { return true; }
+        if (bloque.Obstaculo.Tipo == Obstaculo.OBSTACULO.Peaton && _velocidad < VelocidadMax) { return true; }
 
         return false; 
     }

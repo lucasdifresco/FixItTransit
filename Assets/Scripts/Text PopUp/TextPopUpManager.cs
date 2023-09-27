@@ -17,6 +17,7 @@ public class TextPopUpManager : MonoBehaviour
     public void SetParent(Transform parent) { _parent = parent; }
 
     public void SpawnInstance() { GetInstance(); }
+    public void SpawnInstance(string text) { GetInstance().GetComponent<TextPopUpController>().SetText(text); }
     public void SpawnInstance(Vector3 position) { GetInstance(position); }
 
 

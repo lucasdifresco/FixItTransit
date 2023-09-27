@@ -38,16 +38,19 @@ public class Ciudad : MonoBehaviour
         ActualizarImagenes();
         ActualizarNivel();
     }
-    public List<Bloque> CrearRuta()
+    public List<Bloque> CrearRuta() { return CrearRuta(ObtenerCalleAleatoria()); }
+    public List<Bloque> CrearRuta(Bloque origen)
     {
         List<Bloque> ruta;
         int distanciaMinima = _minDistanciaDeRuta;
         if (Nivel == 0) { distanciaMinima = 3; }
 
+        if (origen == null) { print("Origen Nulo"); }
+
         int iteracion = 0;
         do
         {
-            ruta = Nodo.CalcularRuta(_norteOeste.NO.NO, ObtenerCalleAleatoria(), ObtenerCalleAleatoria());
+            ruta = Nodo.CalcularRuta(_norteOeste.NO.NO, origen, ObtenerCalleAleatoria());
             iteracion++;
         }
         while ((ruta == null || ruta.Count <= distanciaMinima) && iteracion < _maxIteraciones);
@@ -276,7 +279,7 @@ public class Ciudad : MonoBehaviour
             else { seccion.Cuadrantes[cuadrante2].GenerarObstaculo(Escuela); }
         }
     }
-    private Bloque ObtenerCalleAleatoria() 
+    public Bloque ObtenerCalleAleatoria() 
     {
         int seccion;
         int cuadrante;
