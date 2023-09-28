@@ -10,6 +10,8 @@ public class Partida : MonoBehaviour
 
     [SerializeField] private int _bonoPorCiudad = 300;
     [SerializeField] private int _puntosIniciales = 300;
+    [SerializeField] private int _multiplicadorDePuntosPorLongitud = 15;
+    [SerializeField] private int _puntosMinimos = 50;
     [SerializeField] private int _seguridadMaxNivel0 = 3;
     [SerializeField] private int _seguridadMaxNivel1 = 5;
     [SerializeField] private int _seguridadMaxNivel2 = 5;
@@ -41,6 +43,8 @@ public class Partida : MonoBehaviour
 
     [SerializeField] private TextPopUpManager CostoPopUp;
     [SerializeField] private TextPopUpManager BonoPopUp;
+    [SerializeField] private TextPopUpManager IncidentePopUp;
+    [SerializeField] private TextPopUpManager MensajePopUp;
 
     private Herramienta _herramienta;
     private int _dia;
@@ -141,8 +145,9 @@ public class Partida : MonoBehaviour
         Transitando = false;
         if (llegoADestino)
         {
-            _puntos += vehiculo.LongitudRuta * 10;
-            BonoPopUp.GetInstance(vehiculo.transform.position).GetComponent<TextPopUpController>().SetText($"${vehiculo.LongitudRuta * 10}");
+            int puntosGanados = vehiculo.LongitudRuta * _multiplicadorDePuntosPorLongitud + _puntosMinimos;
+            _puntos += puntosGanados;
+            BonoPopUp.GetInstance(vehiculo.transform.position, $"${puntosGanados}");
             _seguridad++;
             _seguridadTotal++;
 
@@ -157,8 +162,11 @@ public class Partida : MonoBehaviour
 
                     if (_ciudad.Nivel >= 2 || _ciudad.Nivel == -1)
                     {
-                        _puntos += _bonoPorCiudad;
-                        BonoPopUp.GetInstance().GetComponent<TextPopUpController>().SetText($"${_bonoPorCiudad}");
+                        if (_bonoPorCiudad != 0)
+                        {
+                            _puntos += _bonoPorCiudad;
+                            BonoPopUp.GetInstance($"${_bonoPorCiudad}");
+                        }
                     }
 
                     OnMapaCompletado?.Invoke();
@@ -168,17 +176,18 @@ public class Partida : MonoBehaviour
         }
         else
         {
-            _seguridad = 0;
+            //_seguridad = 0;
             _incidentes++;
             _incidentesTotales++;
+            IncidentePopUp.GetInstance(vehiculo.transform.position, "+1");
 
             if (_incidentes >= _maxCantidadDeIncidentes)
             {
                 Pausa = true;
                 OnPartidaTerminada?.Invoke();
             }
-            _puntos -= vehiculo.BloqueActual.Obstaculo.Multa;
-            CostoPopUp.GetInstance(vehiculo.transform.position).GetComponent<TextPopUpController>().SetText($"${vehiculo.BloqueActual.Obstaculo.Multa}");
+            //_puntos -= vehiculo.BloqueActual.Obstaculo.Multa;
+            //CostoPopUp.GetInstance(vehiculo.transform.position).GetComponent<TextPopUpController>().SetText($"${vehiculo.BloqueActual.Obstaculo.Multa}");
             if (_puntos < 0) { _puntos = 0; }
         }
         ActualizarTextos();
@@ -194,20 +203,42 @@ public class Partida : MonoBehaviour
         if (!bloque.Calle) { return; }
         if (bloque.Herramienta != null && bloque.Herramienta.Tipo == _herramienta.Tipo) { return; }
 
-        if (_herramienta.Tipo == Herramienta.HERRAMIENTA.Senda && (bloque.Obstaculo == null || bloque.Obstaculo.Tipo != Obstaculo.OBSTACULO.Peaton)) { print("Las Sendas Peatonales solo pueden ubicarse sobre peatones."); return; }
-        if (_herramienta.Tipo == Herramienta.HERRAMIENTA.Estacionar && (bloque.Obstaculo == null || bloque.Obstaculo.Tipo != Obstaculo.OBSTACULO.Escuela)) { print("Solo se pueden crear en las escuelas."); return; }
-        if (_herramienta.Tipo == Herramienta.HERRAMIENTA.Loma && bloque.Obstaculo != null) { print("La loma de burro solo se puede crear en las calles vacías."); return; }
-        if (_herramienta.Tipo == Herramienta.HERRAMIENTA.Semaforo && bloque.Obstaculo != null && bloque.Obstaculo.Tipo != Obstaculo.OBSTACULO.Peaton) { print("El semáforo solo se puede crear en las calles vacías o con peatones."); return; }
+        if (_herramienta.Tipo == Herramienta.HERRAMIENTA.Estacionar && (bloque.Obstaculo == null || bloque.Obstaculo.Tipo != Obstaculo.OBSTACULO.Escuela)) 
+        {
+            MensajePopUp.GetInstance(bloque.transform.position, "Bloque Incompatible");
+            print("Solo se pueden crear en las escuelas."); 
+            return; 
+        }
+        if (_herramienta.Tipo == Herramienta.HERRAMIENTA.Loma && bloque.Obstaculo != null) 
+        {
+            MensajePopUp.GetInstance(bloque.transform.position, "Bloque Incompatible");
+            print("La loma de burro solo se puede crear en las calles vacías."); 
+            return; 
+        }
+        if (_herramienta.Tipo == Herramienta.HERRAMIENTA.Senda && (bloque.Obstaculo == null || bloque.Obstaculo.Tipo != Obstaculo.OBSTACULO.Peaton)) 
+        {
+            MensajePopUp.GetInstance(bloque.transform.position, "Bloque Incompatible");
+            print("Las Sendas Peatonales solo pueden ubicarse sobre peatones."); 
+            return; 
+        }
+        if (_herramienta.Tipo == Herramienta.HERRAMIENTA.Semaforo && (bloque.Obstaculo == null || bloque.Obstaculo.Tipo != Obstaculo.OBSTACULO.Trafico)) 
+        {
+            MensajePopUp.GetInstance(bloque.transform.position, "Bloque Incompatible");
+            print("El semáforo solo se puede crear en las calles vacías o con peatones."); 
+            return; 
+        }
 
-        if (_herramienta.Costo > _puntos) { print($"Fondos Insuficientes {_herramienta.name}: {_herramienta.Costo} --> Puntos Actuales: {_puntos}"); return; }
+        if (_herramienta.Costo > _puntos) 
+        {
+            MensajePopUp.GetInstance(bloque.transform.position, "Fondos Insuficientes");
+            print($"Fondos Insuficientes {_herramienta.name}: {_herramienta.Costo} --> Puntos Actuales: {_puntos}"); return; 
+        }
         _puntos -= _herramienta.Costo;
         bloque.GenerarHerramienta(_herramienta);
         bloque.ActualizarImagen();
         ActualizarTextos();
 
-        TextPopUpController popup = CostoPopUp.GetInstance().GetComponent<TextPopUpController>();
-        popup.SetText($"${_herramienta.Costo}");
-        popup.gameObject.transform.position = bloque.transform.position;
+        CostoPopUp.GetInstance(bloque.transform.position, $"${_herramienta.Costo}");
     }
     private void ActualizarTextos()
     {

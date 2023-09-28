@@ -47,7 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   HojaDeImagenes: {fileID: 11400000, guid: 4c5465c4cecfb4348a7b57e83106f435, type: 2}
   Imagen: {fileID: 6415279150449577721}
-  <Costo>k__BackingField: 50
+  <Costo>k__BackingField: 75
   <Tipo>k__BackingField: 2
 --- !u!1 &6415279150449577726
 GameObject:

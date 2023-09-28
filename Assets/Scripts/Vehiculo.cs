@@ -32,9 +32,12 @@ public class Vehiculo : MonoBehaviour
 
             if (_velocidad < VelocidadMax) { _velocidad++; }
 
-            if (_ruta[_indice].Herramienta != null && _ruta[_indice].Herramienta.Tipo == Herramienta.HERRAMIENTA.Senda) { _velocidad -= 1; }
-            if (_ruta[_indice].Herramienta != null && _ruta[_indice].Herramienta.Tipo == Herramienta.HERRAMIENTA.Loma) { _velocidad -= 3; }
-            if (_ruta[_indice].Herramienta != null && _ruta[_indice].Herramienta.Tipo == Herramienta.HERRAMIENTA.Semaforo) { _velocidad -= 5; }
+            if (_ruta[_indice].Herramienta != null) 
+            {
+                if (_ruta[_indice].Herramienta.Tipo == Herramienta.HERRAMIENTA.Senda) { _velocidad -= 3; }
+                if (_ruta[_indice].Herramienta.Tipo == Herramienta.HERRAMIENTA.Semaforo) { _velocidad -= 5; }
+                if (_ruta[_indice].Herramienta.Tipo == Herramienta.HERRAMIENTA.Loma) { _velocidad -= 3; }
+            }
 
             if (_velocidad < VelocidadMax)
             {
@@ -99,8 +102,11 @@ public class Vehiculo : MonoBehaviour
     private bool SePuedeTransitar(Bloque bloque) 
     {
         if (bloque.Obstaculo == null) { return true; }
-        if (bloque.Obstaculo.Tipo != Obstaculo.OBSTACULO.Peaton) { return true; }
+        
+        if (bloque.Obstaculo.Tipo != Obstaculo.OBSTACULO.Peaton && bloque.Obstaculo.Tipo != Obstaculo.OBSTACULO.Trafico) { return true; }
+
         if (bloque.Obstaculo.Tipo == Obstaculo.OBSTACULO.Peaton && _velocidad < VelocidadMax) { return true; }
+        if (bloque.Obstaculo.Tipo == Obstaculo.OBSTACULO.Trafico && _velocidad < VelocidadMax) { return true; }
 
         return false; 
     }

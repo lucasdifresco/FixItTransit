@@ -313,6 +313,7 @@ public class Cuadrante : MonoBehaviour
             foreach (Bloque calle in calles) { calle.GenerarObstaculo(obstaculo); }
         }
         else if (obstaculo.Tipo == Obstaculo.OBSTACULO.Peaton) { calles[Random.Range(0, calles.Count)].GenerarObstaculo(obstaculo); }
+        else if (obstaculo.Tipo == Obstaculo.OBSTACULO.Trafico) { calles[Random.Range(0, calles.Count)].GenerarObstaculo(obstaculo); }
     }
 
     private void Posicionar(float desplazamiento = 0)

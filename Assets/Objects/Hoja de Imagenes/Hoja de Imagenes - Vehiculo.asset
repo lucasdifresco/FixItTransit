@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e1b7d238ce5e34e88054ad99290657, type: 3}
+  m_Name: Hoja de Imagenes - Vehiculo
+  m_EditorClassIdentifier: 
+  SinConexiones: {fileID: -2120767661, guid: 557da790bd9355241b241623387b67f2, type: 3}
+  O: {fileID: -2120767661, guid: 557da790bd9355241b241623387b67f2, type: 3}
+  N: {fileID: -2120767661, guid: 557da790bd9355241b241623387b67f2, type: 3}
+  E: {fileID: -2120767661, guid: 557da790bd9355241b241623387b67f2, type: 3}
+  S: {fileID: -2120767661, guid: 557da790bd9355241b241623387b67f2, type: 3}
+  NO: {fileID: -2120767661, guid: 557da790bd9355241b241623387b67f2, type: 3}
+  NS: {fileID: -2120767661, guid: 557da790bd9355241b241623387b67f2, type: 3}
+  NE: {fileID: -2120767661, guid: 557da790bd9355241b241623387b67f2, type: 3}
+  SE: {fileID: -2120767661, guid: 557da790bd9355241b241623387b67f2, type: 3}
+  EO: {fileID: -2120767661, guid: 557da790bd9355241b241623387b67f2, type: 3}
+  SO: {fileID: -2120767661, guid: 557da790bd9355241b241623387b67f2, type: 3}
+  SON: {fileID: -2120767661, guid: 557da790bd9355241b241623387b67f2, type: 3}
+  ONE: {fileID: -2120767661, guid: 557da790bd9355241b241623387b67f2, type: 3}
+  NES: {fileID: -2120767661, guid: 557da790bd9355241b241623387b67f2, type: 3}
+  ESO: {fileID: -2120767661, guid: 557da790bd9355241b241623387b67f2, type: 3}
+  ONES: {fileID: -2120767661, guid: 557da790bd9355241b241623387b67f2, type: 3}

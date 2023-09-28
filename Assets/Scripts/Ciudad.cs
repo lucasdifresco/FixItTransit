@@ -5,6 +5,7 @@ public class Ciudad : MonoBehaviour
 {
     [SerializeField] private Seccion _seccion;
     [SerializeField] private Obstaculo Peaton;
+    [SerializeField] private Obstaculo Trafico;
     [SerializeField] private Obstaculo Escuela;
 
     [SerializeField] private int _maxIteraciones = 15;
@@ -23,7 +24,7 @@ public class Ciudad : MonoBehaviour
     private Seccion _norteEste;
     private Seccion _surEste;
     private int _ultimaSeccion = -1;    
-    private bool TirarMoneda { get { return Random.Range(0f, 1f) >= 0.5f; } }
+    private bool TirarMoneda { get { return Random.Range(0f, 1f) >= 0.75f; } }
 
     public int Nivel { get; private set; } = -1;
     public void CrearCiudad()
@@ -267,16 +268,10 @@ public class Ciudad : MonoBehaviour
             cuadrante1 = Random.Range(0, 4);
             cuadrante2 = RandomRange(0, 4, cuadrante1);
 
-            if (cuadrante1 == cuadrante2) { print("Error"); }
+            if (TirarMoneda) { seccion.Cuadrantes[cuadrante1].GenerarObstaculo(Trafico); }
+            else { seccion.Cuadrantes[cuadrante1].GenerarObstaculo(Peaton); }
 
-            //if (TirarMoneda)
-            if (true)
-            {
-                seccion.Cuadrantes[cuadrante1].GenerarObstaculo(Peaton);
-                seccion.Cuadrantes[cuadrante2].GenerarObstaculo(Escuela);
-            }
-            else if (TirarMoneda) { seccion.Cuadrantes[cuadrante1].GenerarObstaculo(Peaton); }
-            else { seccion.Cuadrantes[cuadrante2].GenerarObstaculo(Escuela); }
+            seccion.Cuadrantes[cuadrante2].GenerarObstaculo(Escuela);
         }
     }
     public Bloque ObtenerCalleAleatoria() 

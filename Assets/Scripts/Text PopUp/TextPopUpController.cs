@@ -8,6 +8,7 @@ public class TextPopUpController : MonoBehaviour
     [SerializeField] private float _speed;
     [SerializeField] private float _lifespan;
     [SerializeField] private float _distance;
+    [SerializeField] private bool _disapear = true;
     [SerializeField] private TMP_Text _component;
     [SerializeField] private Image _image;
 
@@ -37,6 +38,8 @@ public class TextPopUpController : MonoBehaviour
         _progress = _timer / _lifespan;
 
         transform.position = _initialPosition + (_direction * _progress);
+
+        if (!_disapear) { return; }
         if (_component != null) { _component.color = new Color(_component.color.r, _component.color.g, _component.color.b, 1 - _progress); }
         if (_image != null) { _image.color = new Color(_image.color.r, _image.color.g, _image.color.b, 1 - _progress); }
     }

@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Obstaculo : MonoBehaviour
 {
-    public enum OBSTACULO { Peaton, Escuela }
+    public enum OBSTACULO { Peaton, Escuela, Trafico }
 
     [SerializeField] private HojaDeImagenes HojaDeImagenes;
     [SerializeField] private SpriteRenderer Imagen;
