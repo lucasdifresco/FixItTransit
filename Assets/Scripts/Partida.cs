@@ -24,6 +24,14 @@ public class Partida : MonoBehaviour
     [SerializeField] private TMP_Text Texto_Incidentes;
     [SerializeField] private TMP_Text Texto_Seguridad;
 
+    [SerializeField] private TMP_Text Texto_DiasTotales;
+    [SerializeField] private TMP_Text Texto_IncidentesTotales;
+    [SerializeField] private TMP_Text Texto_SeguridadTotales;
+    [SerializeField] private TMP_Text Texto_RespuestasCorrectas;
+    [SerializeField] private TMP_Text Texto_RespuestasIncorrectas;
+    [SerializeField] private TMP_Text Texto_RespuestasTotales;
+    [SerializeField] private TMP_Text Texto_Nota;
+
     [SerializeField] private Barra BarraSeguridad;
     [SerializeField] private Barra BarraIncidentes;
 
@@ -50,6 +58,9 @@ public class Partida : MonoBehaviour
         }
     }
 
+    private int _incidentesTotales;
+    private int _seguridadTotal;
+
     private Bloque _origen;
 
     private void Awake() { _cuestionario.Inicializar(); }
@@ -69,6 +80,11 @@ public class Partida : MonoBehaviour
         _puntos = _puntosIniciales;
         _incidentes = 0;
         _seguridad = 0;
+
+        _incidentesTotales = 0;
+        _seguridadTotal = 0;
+        _cuestionario.Reiniciar();
+
         _ciudad.CrearCiudad();
         _ciudad.ReiniciarNivel();
         ActualizarTextos();
@@ -128,6 +144,7 @@ public class Partida : MonoBehaviour
             _puntos += vehiculo.LongitudRuta * 10;
             BonoPopUp.GetInstance(vehiculo.transform.position).GetComponent<TextPopUpController>().SetText($"${vehiculo.LongitudRuta * 10}");
             _seguridad++;
+            _seguridadTotal++;
 
             _origen = vehiculo.BloqueActual;
             MarcadorDeOrigen.Posicionar(_origen);
@@ -153,6 +170,8 @@ public class Partida : MonoBehaviour
         {
             _seguridad = 0;
             _incidentes++;
+            _incidentesTotales++;
+
             if (_incidentes >= _maxCantidadDeIncidentes)
             {
                 Pausa = true;
@@ -196,6 +215,14 @@ public class Partida : MonoBehaviour
         Texto_Puntos.text = $"${_puntos}";
         Texto_Incidentes.text = $"{_incidentes}/{_maxCantidadDeIncidentes}";
         Texto_Seguridad.text = $"{_seguridad}/{SeguridadNivel}";
+
+        Texto_DiasTotales.text = $"DÍAS: {_dia}";
+        Texto_IncidentesTotales.text = $"INCIDENTES: {_incidentesTotales}";
+        Texto_SeguridadTotales.text = $"VIAJES SEGUROS: {_seguridadTotal}";
+        Texto_RespuestasCorrectas.text = $"CORRECTAS: {_cuestionario.RespuestasCorrectas}";
+        Texto_RespuestasIncorrectas.text = $"INCORRECTAS: {_cuestionario.RespuestasIncorrectas}";
+        Texto_RespuestasTotales.text = $"TOTALES: {_cuestionario.RespuestasTotales}";
+        Texto_Nota.text = $"{((float.IsNaN(_cuestionario.Nota)) ? 0: _cuestionario.Nota):#0.#}";
 
         BarraSeguridad.SetProgreso((float)_seguridad / SeguridadNivel);
         BarraIncidentes.SetProgreso((float)_incidentes / _maxCantidadDeIncidentes);

@@ -9,4 +9,5 @@ EditorBuildSettings:
     path: Assets/Scenes/Juego.unity
     guid: d612b5a192eb55b4bb33f240b0a7d4b6
   m_configObjects:
+    com.unity.adaptiveperformance.loader_settings: {fileID: 11400000, guid: d69c9443549ea6c4eae7a45d30fefe05, type: 2}
     com.unity.adaptiveperformance.simulator.provider_settings: {fileID: 11400000, guid: 2afed112cdd995f42908d12b5b1fb0ea, type: 2}
