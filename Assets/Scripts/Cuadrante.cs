@@ -308,8 +308,8 @@ public class Cuadrante : MonoBehaviour
 
         if (obstaculo.Tipo == Obstaculo.OBSTACULO.Escuela) 
         {
-            List<Bloque> edificios = Edificios;
-            edificios[Random.Range(0, edificios.Count)].GenerarObstaculo(obstaculo);
+            //List<Bloque> edificios = Edificios;
+            //edificios[Random.Range(0, edificios.Count)].GenerarObstaculo(obstaculo);
             foreach (Bloque calle in calles) { calle.GenerarObstaculo(obstaculo); }
         }
         else if (obstaculo.Tipo == Obstaculo.OBSTACULO.Peaton) { calles[Random.Range(0, calles.Count)].GenerarObstaculo(obstaculo); }

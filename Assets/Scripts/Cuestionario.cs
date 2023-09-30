@@ -7,6 +7,7 @@ using System.Collections.Generic;
 
 public class Cuestionario : MonoBehaviour
 {
+    [SerializeField] private Partida _partida;
     [SerializeField] private TextAsset _archivoPreguntas;
     [SerializeField] private TMP_Text _labelPregunta;
     [SerializeField] private Image _imagenContenedor;
@@ -15,6 +16,10 @@ public class Cuestionario : MonoBehaviour
     [SerializeField] private Button _buttonOpcionB;
     [SerializeField] private Button _buttonOpcionC;
     [SerializeField] private GameObject _buttonCerrar;
+
+    [SerializeField] private GameObject _posicionPopUpOpcionA;
+    [SerializeField] private GameObject _posicionPopUpOpcionB;
+    [SerializeField] private GameObject _posicionPopUpOpcionC;
 
     [SerializeField] private Color _colorNormal;
     [SerializeField] private Color _colorRespuestaCorrecta;
@@ -57,9 +62,9 @@ public class Cuestionario : MonoBehaviour
         _buttonOpcionB.onClick.RemoveAllListeners();
         _buttonOpcionC.onClick.RemoveAllListeners();
      
-        _buttonOpcionA.onClick.AddListener(() => { VerificarRespuesta("A"); });
-        _buttonOpcionB.onClick.AddListener(() => { VerificarRespuesta("B"); });
-        _buttonOpcionC.onClick.AddListener(() => { VerificarRespuesta("C"); });
+        _buttonOpcionA.onClick.AddListener(() => { VerificarRespuesta("A", _buttonOpcionA, _posicionPopUpOpcionA); });
+        _buttonOpcionB.onClick.AddListener(() => { VerificarRespuesta("B", _buttonOpcionB, _posicionPopUpOpcionB); });
+        _buttonOpcionC.onClick.AddListener(() => { VerificarRespuesta("C", _buttonOpcionC, _posicionPopUpOpcionC); });
 
         _preguntaActual = _preguntas[indice];
         _labelPregunta.text = _preguntaActual.Pregunta;
@@ -78,26 +83,24 @@ public class Cuestionario : MonoBehaviour
 
         print(_preguntaActual.Respuesta);
     }
-    public void VerificarRespuesta(string opcion)
+    private void VerificarRespuesta(string opcion, Button botton, GameObject posicionPopUp)
     {
         if (_preguntaActual.ValidarRespuesta(opcion)) 
         {
             _onRespuestaCorrecta?.Invoke();
             RespuestasCorrectas++;
-
             RespuestaCorrecta = true;
-            if (opcion == "A") { _buttonOpcionA.GetComponent<Image>().color = _colorRespuestaCorrecta; }
-            if (opcion == "B") { _buttonOpcionB.GetComponent<Image>().color = _colorRespuestaCorrecta; }
-            if (opcion == "C") { _buttonOpcionC.GetComponent<Image>().color = _colorRespuestaCorrecta; }
+            
+            botton.GetComponent<Image>().color = _colorRespuestaCorrecta;
+
+            _partida.RespuestaCorrecta(posicionPopUp.transform.position);
         }
         else 
         {
             _onRespuestaIncorrecta?.Invoke();
             RespuestasIncorrectas++;
 
-            if (opcion == "A") { _buttonOpcionA.GetComponent<Image>().color = _colorRespuestaIncorrecta; }
-            if (opcion == "B") { _buttonOpcionB.GetComponent<Image>().color = _colorRespuestaIncorrecta; }
-            if (opcion == "C") { _buttonOpcionC.GetComponent<Image>().color = _colorRespuestaIncorrecta; }
+            botton.GetComponent<Image>().color = _colorRespuestaIncorrecta;
 
             if (_preguntaActual.Respuesta == "A") { _buttonOpcionA.GetComponent<Image>().color = _colorRespuestaCorrecta; }
             if (_preguntaActual.Respuesta == "B") { _buttonOpcionB.GetComponent<Image>().color = _colorRespuestaCorrecta; }

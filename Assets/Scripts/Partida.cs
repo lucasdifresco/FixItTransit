@@ -12,10 +12,12 @@ public class Partida : MonoBehaviour
     [SerializeField] private int _puntosIniciales = 300;
     [SerializeField] private int _multiplicadorDePuntosPorLongitud = 15;
     [SerializeField] private int _puntosMinimos = 50;
-    [SerializeField] private int _seguridadMaxNivel0 = 3;
-    [SerializeField] private int _seguridadMaxNivel1 = 5;
-    [SerializeField] private int _seguridadMaxNivel2 = 5;
-    [SerializeField] private int _maxCantidadDeIncidentes = 10;
+
+    [SerializeField] private int _incidentesPorCuestionario = 1;
+    [SerializeField] private int _bonoPorCuestionario = 100;
+
+    [SerializeField] private int _maxCantidadDeSeguridad = 3;
+    [SerializeField] private int _maxCantidadDeIncidentes = 3;
     [SerializeField] private int _frecuenciaCuestionario = 3;
 
     [SerializeField] private UnityEvent OnMapaCompletado;
@@ -54,13 +56,6 @@ public class Partida : MonoBehaviour
     private int _incidentes;
     private int _seguridad;
     private int _diasDesdeUltimoCuestionario = 0;
-    private int SeguridadNivel { get 
-        {
-            if (_ciudad.Nivel == 0) { return _seguridadMaxNivel0; }
-            else if (_ciudad.Nivel == 1) { return _seguridadMaxNivel1; }
-            else { return _seguridadMaxNivel2; }
-        }
-    }
 
     private int _incidentesTotales;
     private int _seguridadTotal;
@@ -88,9 +83,9 @@ public class Partida : MonoBehaviour
         _incidentesTotales = 0;
         _seguridadTotal = 0;
         _cuestionario.Reiniciar();
+        _ciudad.ReiniciarNivel();
 
         _ciudad.CrearCiudad();
-        _ciudad.ReiniciarNivel();
         ActualizarTextos();
         _origen = _ciudad.ObtenerCalleAleatoria();
         MarcadorDeOrigen.Posicionar(_origen);
@@ -110,18 +105,10 @@ public class Partida : MonoBehaviour
         if (Transitando) { return; }
         if (Pausa) { return; }
 
-        _diasDesdeUltimoCuestionario++;
-        if (_diasDesdeUltimoCuestionario >= _frecuenciaCuestionario) 
-        {
-            _diasDesdeUltimoCuestionario = 0;
-            ActivarBotonCuestionario();
-        }
-
         _dia++;
         
         if (_vehiculo == null) { print("No hay vehiculo"); return; }
         Vehiculo vehiculo = Instantiate(_vehiculo, transform.position, transform.rotation, transform);
-        //vehiculo.TransitarRuta(_ciudad.CrearRuta(), VerificarRecorrido);
         vehiculo.TransitarRuta(_ciudad.CrearRuta(_origen), VerificarRecorrido);
 
         ActualizarTextos();
@@ -129,17 +116,29 @@ public class Partida : MonoBehaviour
     }
     public void SetHerramienta(Herramienta herramienta) { if (Pausa) { return; } _herramienta = herramienta; }
     public void SetNulo() { if (Pausa) { return; } _herramienta = null; }
-    public void ReducirIncidentes(int cantidad) 
+    public void RespuestaCorrecta(Vector3 posicion)
     {
-        if (_incidentes - cantidad >= _maxCantidadDeIncidentes) { return; }
-        _incidentes -= cantidad;
-        if (_incidentes < 0) { _incidentes = 0; }
-        ActualizarTextos();        
+        int reduccion = ReducirIncidentes(_incidentesPorCuestionario);
+        if (reduccion > 0) { IncidentePopUp.GetInstance(posicion, $"-{reduccion}"); }
+        else 
+        {
+            _puntos += _bonoPorCuestionario;
+            BonoPopUp.GetInstance(posicion, $"${_bonoPorCuestionario}"); 
+        }
+        ActualizarTextos();
     }
-    
+
     public void ActivarBotonCuestionario() { BotonNuevoDia.SetActive(false); BotonPregunta.SetActive(true); }
     public void DesactivarBotonCuestionario() { BotonNuevoDia.SetActive(true); BotonPregunta.SetActive(false); }
 
+    private int ReducirIncidentes(int cantidad)
+    {
+        cantidad = Mathf.Abs(cantidad);
+        if (_incidentes == 0) { cantidad = 0; }
+        _incidentes -= cantidad;
+        if (_incidentes < 0) { cantidad = _incidentes; _incidentes = 0; }
+        return cantidad;
+    }
     private void VerificarRecorrido(Vehiculo vehiculo, bool llegoADestino) 
     {
         Transitando = false;
@@ -154,29 +153,23 @@ public class Partida : MonoBehaviour
             _origen = vehiculo.BloqueActual;
             MarcadorDeOrigen.Posicionar(_origen);
 
-            if (_seguridad >= SeguridadNivel)
+            if (_seguridad >= _maxCantidadDeSeguridad)
             {
-                if (_ciudad.SiguienteNivel())
+                _ciudad.SiguienteNivel();
+                Pausa = true;
+
+                if (_bonoPorCiudad != 0)
                 {
-                    Pausa = true;
-
-                    if (_ciudad.Nivel >= 2 || _ciudad.Nivel == -1)
-                    {
-                        if (_bonoPorCiudad != 0)
-                        {
-                            _puntos += _bonoPorCiudad;
-                            BonoPopUp.GetInstance($"${_bonoPorCiudad}");
-                        }
-                    }
-
-                    OnMapaCompletado?.Invoke();
+                    _puntos += _bonoPorCiudad;
+                    BonoPopUp.GetInstance($"${_bonoPorCiudad}");
                 }
+
+                OnMapaCompletado?.Invoke();
                 _seguridad = 0;
             }
         }
         else
         {
-            //_seguridad = 0;
             _incidentes++;
             _incidentesTotales++;
             IncidentePopUp.GetInstance(vehiculo.transform.position, "+1");
@@ -186,10 +179,16 @@ public class Partida : MonoBehaviour
                 Pausa = true;
                 OnPartidaTerminada?.Invoke();
             }
-            //_puntos -= vehiculo.BloqueActual.Obstaculo.Multa;
-            //CostoPopUp.GetInstance(vehiculo.transform.position).GetComponent<TextPopUpController>().SetText($"${vehiculo.BloqueActual.Obstaculo.Multa}");
             if (_puntos < 0) { _puntos = 0; }
         }
+
+        _diasDesdeUltimoCuestionario++;
+        if (_diasDesdeUltimoCuestionario >= _frecuenciaCuestionario)
+        {
+            _diasDesdeUltimoCuestionario = 0;
+            ActivarBotonCuestionario();
+        }
+
         ActualizarTextos();
     }
     private void CrearHerramienta()
@@ -245,7 +244,7 @@ public class Partida : MonoBehaviour
         Texto_Dias.text = $"DÍA {_dia}";
         Texto_Puntos.text = $"${_puntos}";
         Texto_Incidentes.text = $"{_incidentes}/{_maxCantidadDeIncidentes}";
-        Texto_Seguridad.text = $"{_seguridad}/{SeguridadNivel}";
+        Texto_Seguridad.text = $"{_seguridad}/{_maxCantidadDeSeguridad}";
 
         Texto_DiasTotales.text = $"DÍAS: {_dia}";
         Texto_IncidentesTotales.text = $"INCIDENTES: {_incidentesTotales}";
@@ -255,7 +254,7 @@ public class Partida : MonoBehaviour
         Texto_RespuestasTotales.text = $"TOTALES: {_cuestionario.RespuestasTotales}";
         Texto_Nota.text = $"{((float.IsNaN(_cuestionario.Nota)) ? 0: _cuestionario.Nota):#0.#}";
 
-        BarraSeguridad.SetProgreso((float)_seguridad / SeguridadNivel);
+        BarraSeguridad.SetProgreso((float)_seguridad / _maxCantidadDeSeguridad);
         BarraIncidentes.SetProgreso((float)_incidentes / _maxCantidadDeIncidentes);
     }
 }

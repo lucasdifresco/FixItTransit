@@ -14,18 +14,26 @@ public class Ciudad : MonoBehaviour
     [SerializeField] private bool _pintarCamino = false;
 
     private Seccion[] _secciones;
-    private Seccion _centro;
-    private Seccion _norte;
-    private Seccion _sur;
-    private Seccion _oeste;
-    private Seccion _este;
-    private Seccion _norteOeste;
-    private Seccion _surOeste;
-    private Seccion _norteEste;
-    private Seccion _surEste;
-    private int _ultimaSeccion = -1;    
-    private bool TirarMoneda { get { return Random.Range(0f, 1f) >= 0.75f; } }
+    private Seccion _NO;
+    private Seccion _SO;
+    private Seccion _NE;
+    private Seccion _SE;
 
+    private Seccion[] _seccionesDesordenadas 
+    {
+        get 
+        {
+            Seccion[] secciones = _secciones;
+            int n = secciones.Length;
+            int k;
+            while (n > 1)
+            {
+                k = Random.Range(0, n--);
+                (secciones[k], secciones[n]) = (secciones[n], secciones[k]);
+            }
+            return secciones;
+        }
+    }
     public int Nivel { get; private set; } = -1;
     public void CrearCiudad()
     {
@@ -44,214 +52,86 @@ public class Ciudad : MonoBehaviour
     {
         List<Bloque> ruta;
         int distanciaMinima = _minDistanciaDeRuta;
-        if (Nivel == 0) { distanciaMinima = 3; }
-
-        if (origen == null) { print("Origen Nulo"); }
-
+        
         int iteracion = 0;
         do
         {
-            ruta = Nodo.CalcularRuta(_norteOeste.NO.NO, origen, ObtenerCalleAleatoria());
+            ruta = Nodo.CalcularRuta(_NO.NO.NO, origen, ObtenerCalleAleatoria());
             iteracion++;
         }
         while ((ruta == null || ruta.Count <= distanciaMinima) && iteracion < _maxIteraciones);
 
         return ruta;
     }
-    public void ReiniciarNivel()
-    {
-        Nivel = -1;
-        ActualizarNivel();
-    }
-    public bool SiguienteNivel() 
-    {
-        return true;
-        Nivel++;
-        if (Nivel > 2) { return true; }
-        ActualizarNivel();
-        return false;
-    }
+    public void ReiniciarNivel() { Nivel = -1; }
+    public void SiguienteNivel() { Nivel++; }
 
     private void Limpiar() 
     {
-        if (_centro != null) { Destroy(_centro.gameObject); }
-        
-        if (_norte != null) { Destroy(_norte.gameObject); }
-        if (_sur != null) { Destroy(_sur.gameObject); }
-        if (_oeste != null) { Destroy(_oeste.gameObject); }
-        if (_este != null) { Destroy(_este.gameObject); }
-
-        if (_norteOeste != null) { Destroy(_norteOeste.gameObject); }
-        if (_surOeste != null) { Destroy(_surOeste.gameObject); }
-        if (_norteEste != null) { Destroy(_norteEste.gameObject); }
-        if (_surEste != null) { Destroy(_surEste.gameObject); }
+        if (_NO != null) { Destroy(_NO.gameObject); }
+        if (_SO != null) { Destroy(_SO.gameObject); }
+        if (_NE != null) { Destroy(_NE.gameObject); }
+        if (_SE != null) { Destroy(_SE.gameObject); }
     }
     private void Instanciar() 
     {
-        _centro = Instantiate(_seccion, transform.position, transform.rotation, transform);
+        _NO = Instantiate(_seccion, transform.position + new Vector3(-2, 2, 0), transform.rotation, transform);
+        _SO = Instantiate(_seccion, transform.position + new Vector3(-2, -2, 0), transform.rotation, transform);
+        _NE = Instantiate(_seccion, transform.position + new Vector3(2, 2, 0), transform.rotation, transform);
+        _SE = Instantiate(_seccion, transform.position + new Vector3(2, -2, 0), transform.rotation, transform);
 
-        _norte = Instantiate(_seccion, transform.position + new Vector3( 0,  4, 0), transform.rotation, transform);
-        _sur   = Instantiate(_seccion, transform.position + new Vector3( 0, -4, 0), transform.rotation, transform);
-        _oeste = Instantiate(_seccion, transform.position + new Vector3(-4,  0, 0), transform.rotation, transform);
-        _este  = Instantiate(_seccion, transform.position + new Vector3( 4,  0, 0), transform.rotation, transform);
-
-        _norteOeste = Instantiate(_seccion, transform.position + new Vector3(-4,  4, 0), transform.rotation, transform);
-        _surOeste   = Instantiate(_seccion, transform.position + new Vector3(-4, -4, 0), transform.rotation, transform);
-        _norteEste  = Instantiate(_seccion, transform.position + new Vector3( 4,  4, 0), transform.rotation, transform);
-        _surEste    = Instantiate(_seccion, transform.position + new Vector3( 4, -4, 0), transform.rotation, transform);
-
-        _secciones = new[] { _centro, _norte, _sur, _oeste, _este, _norteOeste, _norteEste, _surOeste, _surEste };
+        _secciones = new[] { _NO, _NE, _SO, _SE };
     }
     private void Conectar()
     {
-        _centro.Norte = _norte;
-        _centro.Sur = _sur;
-        _centro.Oeste = _oeste;
-        _centro.Este = _este;
+        _NO.Sur = _SO;
+        _NO.Este = _NE;
 
-        _norte.Sur = _centro;
-        _norte.Oeste = _norteOeste;
-        _norte.Este = _norteEste;
+        _SO.Norte = _NO;
+        _SO.Este = _SE;
 
-        _sur.Norte = _centro;
-        _sur.Oeste = _surOeste;
-        _sur.Este = _surEste;
+        _NE.Sur = _SE;
+        _NE.Oeste = _NO;
 
-        _oeste.Norte = _norteOeste;
-        _oeste.Sur = _surOeste;
-        _oeste.Este = _centro;
-
-        _este.Norte = _norteEste;
-        _este.Sur = _surEste;
-        _este.Oeste = _centro;
-
-        _norteOeste.Sur = _oeste;
-        _norteOeste.Este = _norte;
-
-        _surOeste.Norte = _oeste;
-        _surOeste.Este = _sur;
-
-        _norteEste.Sur = _este;
-        _norteEste.Oeste = _norte;
-
-        _surEste.Norte = _este;
-        _surEste.Oeste = _sur;
+        _SE.Norte = _NE;
+        _SE.Oeste = _SO;
     }
     private void Inicializar()
     {
-        _centro.Inicializar();
-
-        _norte.Inicializar();
-        _sur.Inicializar();
-        _oeste.Inicializar();
-        _este.Inicializar();
-
-        _norteOeste.Inicializar();
-        _surOeste.Inicializar();
-        _norteEste.Inicializar();
-        _surEste.Inicializar();
+        _NO.Inicializar();
+        _SO.Inicializar();
+        _NE.Inicializar();
+        _SE.Inicializar();
     }
     private void ActualizarConexiones() 
     {
-        _centro.ActualizarConexiones();
-
-        _norte.ActualizarConexiones();
-        _sur.ActualizarConexiones();
-        _oeste.ActualizarConexiones();
-        _este.ActualizarConexiones();
-
-        _norteOeste.ActualizarConexiones();
-        _surOeste.ActualizarConexiones();
-        _norteEste.ActualizarConexiones();
-        _surEste.ActualizarConexiones();
+        _NO.ActualizarConexiones();
+        _SO.ActualizarConexiones();
+        _NE.ActualizarConexiones();
+        _SE.ActualizarConexiones();
     }
     private void GenerarSecciones()
     {
         int iteracion;
-
-        iteracion = 0; do { _centro.SetSeccion(); iteracion++; } while (_centro.TieneRotonda && iteracion < _maxIteraciones);
         
-        iteracion = 0; do { _norte.SetSur(); iteracion++; } while (_norte.TieneRotonda && iteracion < _maxIteraciones);
-        iteracion = 0; do { _sur.SetNorte(); iteracion++; } while (_sur.TieneRotonda && iteracion < _maxIteraciones);
-        iteracion = 0; do { _oeste.SetEste(); iteracion++; } while (_oeste.TieneRotonda && iteracion < _maxIteraciones);
-        iteracion = 0; do { _este.SetOeste(); iteracion++; } while (_este.TieneRotonda && iteracion < _maxIteraciones);
-        
-        iteracion = 0; do { _norteOeste.SetSurEste(); iteracion++; } while (_norteOeste.TieneRotonda && iteracion < _maxIteraciones);
-        iteracion = 0; do { _surOeste.SetNorteEste(); iteracion++; } while (_surOeste.TieneRotonda && iteracion < _maxIteraciones);
-        iteracion = 0; do { _norteEste.SetSurOeste(); iteracion++; } while (_norteEste.TieneRotonda && iteracion < _maxIteraciones);
-        iteracion = 0; do { _surEste.SetNorteOeste(); iteracion++; } while (_surEste.TieneRotonda && iteracion < _maxIteraciones);
+        iteracion = 0; do { _NO.SetSeccion(); iteracion++; } while (_NO.TieneRotonda && iteracion < _maxIteraciones);
+        iteracion = 0; do { _SO.SetNorte(); iteracion++; } while (_SO.TieneRotonda && iteracion < _maxIteraciones);
+        iteracion = 0; do { _NE.SetOeste(); iteracion++; } while (_NE.TieneRotonda && iteracion < _maxIteraciones);
+        iteracion = 0; do { _SE.SetNorteOeste(); iteracion++; } while (_SE.TieneRotonda && iteracion < _maxIteraciones);
     }
     private void ActualizarImagenes()
     {
-        _centro.ActualizarImagenes();
-
-        _norte.ActualizarImagenes();
-        _sur.ActualizarImagenes();
-        _oeste.ActualizarImagenes();
-        _este.ActualizarImagenes();
-
-        _norteOeste.ActualizarImagenes();
-        _surOeste.ActualizarImagenes();
-        _norteEste.ActualizarImagenes();
-        _surEste.ActualizarImagenes();
+        _NO.ActualizarImagenes();
+        _SO.ActualizarImagenes();
+        _NE.ActualizarImagenes();
+        _SE.ActualizarImagenes();
     }
     private void ActualizarNivel() 
     {
-        if (Nivel == 0)
-        {
-            if (_centro != null) { _centro.Activar(); }
-
-            if (_norte != null) { _norte.Desactivar(); }
-            if (_sur != null) { _sur.Desactivar(); }
-            if (_oeste != null) { _oeste.Desactivar(); }
-            if (_este != null) { _este.Desactivar(); }
-
-            if (_norteOeste != null) { _norteOeste.Desactivar(); }
-            if (_surOeste != null) { _surOeste.Desactivar(); }
-            if (_norteEste != null) { _norteEste.Desactivar(); }
-            if (_surEste != null) { _surEste.Desactivar(); }
-        }
-        else if (Nivel == 1)
-        {
-            if (_centro != null) { _centro.Activar(); }
-
-            if (_norte != null) { _norte.Activar(); }
-            if (_sur != null) { _sur.Activar(); }
-            if (_oeste != null) { _oeste.Activar(); }
-            if (_este != null) { _este.Activar(); }
-
-            if (_norteOeste != null) { _norteOeste.Desactivar(); }
-            if (_surOeste != null) { _surOeste.Desactivar(); }
-            if (_norteEste != null) { _norteEste.Desactivar(); }
-            if (_surEste != null) { _surEste.Desactivar(); }
-        }
-        else if (Nivel == 2)
-        {
-            if (_centro != null) { _centro.Activar(); }
-
-            if (_norte != null) { _norte.Activar(); }
-            if (_sur != null) { _sur.Activar(); }
-            if (_oeste != null) { _oeste.Activar(); }
-            if (_este != null) { _este.Activar(); }
-
-            if (_norteOeste != null) { _norteOeste.Activar(); }
-            if (_surOeste != null) { _surOeste.Activar(); }
-            if (_norteEste != null) { _norteEste.Activar(); }
-            if (_surEste != null) { _surEste.Activar(); }
-        }
-        else if (Nivel == -1) 
-        {
-            if (_centro != null) { _centro.Activar(); }
-            if (_sur != null) { _sur.Activar(); }
-            if (_este != null) { _este.Activar(); }
-            if (_surEste != null) { _surEste.Activar(); }
-
-            if (_norte != null) { _norte.Desactivar(); }
-            if (_oeste != null) { _oeste.Desactivar(); }
-            if (_norteOeste != null) { _norteOeste.Desactivar(); }
-            if (_surOeste != null) { _surOeste.Desactivar(); }
-            if (_norteEste != null) { _norteEste.Desactivar(); }
-        }
+        if (_NO != null) { _NO.Activar(); }
+        if (_SO != null) { _SO.Activar(); }
+        if (_SE != null) { _SE.Activar(); }
+        if (_NE != null) { _NE.Activar(); }
 
         ActualizarImagenes();
     }
@@ -259,33 +139,44 @@ public class Ciudad : MonoBehaviour
     {
         int cuadrante1;
         int cuadrante2;
+        int cuadrante3;
         Cuadrante[] cuadrantes;
 
-        foreach (Seccion seccion in _secciones) 
+        int cantidadPeatonesMax = 0;
+        int cantidadEscuelasMax = 0;
+        int cantidadTraficoMax = 0;
+
+        int cantidadPeatones = 0;
+        int cantidadEscuelas = 0;
+        int cantidadTrafico = 0;
+
+        if (Nivel == -1) { cantidadPeatonesMax = 1; cantidadEscuelasMax = 2; cantidadTraficoMax = 1; }
+        if (Nivel == 0)  { cantidadPeatonesMax = 1; cantidadEscuelasMax = 2; cantidadTraficoMax = 1; }
+        if (Nivel == 1)  { cantidadPeatonesMax = 2; cantidadEscuelasMax = 2; cantidadTraficoMax = 1; }
+        if (Nivel == 2)  { cantidadPeatonesMax = 2; cantidadEscuelasMax = 3; cantidadTraficoMax = 1; }
+        if (Nivel == 3)  { cantidadPeatonesMax = 2; cantidadEscuelasMax = 3; cantidadTraficoMax = 2; }
+        if (Nivel >= 4)  { cantidadPeatonesMax = 2; cantidadEscuelasMax = 4; cantidadTraficoMax = 2; }
+        //if (Nivel == 5)  { cantidadPeatonesMax = 3; cantidadEscuelasMax = 4; cantidadTraficoMax = 2; }
+        //if (Nivel >= 6)  { cantidadPeatonesMax = 3; cantidadEscuelasMax = 4; cantidadTraficoMax = 3; }
+        
+        foreach (Seccion seccion in _seccionesDesordenadas) 
         {
             cuadrantes = seccion.Cuadrantes;
 
             cuadrante1 = Random.Range(0, 4);
             cuadrante2 = RandomRange(0, 4, cuadrante1);
+            cuadrante3 = RandomRange(0, 4, cuadrante1, cuadrante2);
 
-            if (TirarMoneda) { seccion.Cuadrantes[cuadrante1].GenerarObstaculo(Trafico); }
-            else { seccion.Cuadrantes[cuadrante1].GenerarObstaculo(Peaton); }
-
-            seccion.Cuadrantes[cuadrante2].GenerarObstaculo(Escuela);
+            if (cantidadEscuelas < cantidadEscuelasMax) { seccion.Cuadrantes[cuadrante1].GenerarObstaculo(Escuela); cantidadEscuelas++; }
+            if (cantidadPeatones < cantidadPeatonesMax) { seccion.Cuadrantes[cuadrante2].GenerarObstaculo(Peaton); cantidadPeatones++; }
+            if (cantidadTrafico < cantidadTraficoMax) { seccion.Cuadrantes[cuadrante3].GenerarObstaculo(Trafico); cantidadTrafico++; }            
         }
     }
     public Bloque ObtenerCalleAleatoria() 
     {
-        int seccion;
-        int cuadrante;
+        int seccion = RandomRange(0, 4);
+        int cuadrante = Random.Range(0, 4);
 
-        if (Nivel == -1) { seccion = RandomRange(0, 9, _ultimaSeccion, 1, 3, 5, 6, 7); }
-        else if (Nivel == 0) { seccion = 0; }
-        else if (Nivel == 1) { seccion = RandomRange(0, 5, _ultimaSeccion); }
-        else { seccion = RandomRange(0, 9, _ultimaSeccion); }
-        cuadrante = Random.Range(0, 4);
-
-        _ultimaSeccion = seccion;
         List<Bloque> calles = _secciones[seccion].Cuadrantes[cuadrante].Calles;
 
         Bloque bloque = calles[Random.Range(0, calles.Count)];
