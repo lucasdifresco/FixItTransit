@@ -79,6 +79,8 @@ public class Partida : MonoBehaviour
         _puntos = _puntosIniciales;
         _incidentes = 0;
         _seguridad = 0;
+        _diasDesdeUltimoCuestionario = 0;
+        DesactivarBotonCuestionario();
 
         _incidentesTotales = 0;
         _seguridadTotal = 0;
