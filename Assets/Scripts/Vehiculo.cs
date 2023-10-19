@@ -19,10 +19,12 @@ public class Vehiculo : MonoBehaviour
     private Vector3 _destino;
     private float _temporizador;
     private bool _velocidadActualizada = false;
+    private bool _pausa = false;
     private float DeltaTime { get { return Time.deltaTime * ((_velocidad == VelocidadMax)? VelocidadAlta : VelocidadBaja); } }
     
     private void Update()
     {
+        if (_pausa) { return; }
         if (!_enMovimiento) { return; }
         _temporizador += DeltaTime;
 
@@ -89,6 +91,9 @@ public class Vehiculo : MonoBehaviour
         Preparar();
         _enMovimiento = true;
     }
+
+    public void Pausar() { _pausa = true; }
+    public void Reanudar() { _pausa = false; }
 
     private void Preparar()
     {

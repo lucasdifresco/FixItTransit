@@ -1,0 +1,80 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c0ebf2e613547b4d8a19431dda00791, type: 3}
+  m_Name: SFX
+  m_EditorClassIdentifier: 
+  Volume: 1
+  Pitch: 1
+  Library:
+  - Clip: {fileID: 8300000, guid: 57a761f553ea2d941bf9807bc79714e5, type: 3}
+    Name: Auto
+    Volume: 0.5
+    Pitch: 2
+    Loop: 0
+    CreateNewInstanceOnEachPlay: 0
+    SkipNextStop: 0
+  - Clip: {fileID: 8300000, guid: 0b04f1a44386e954dbd8c5c7061d6c4a, type: 3}
+    Name: Sirena
+    Volume: 0.5
+    Pitch: 2
+    Loop: 0
+    CreateNewInstanceOnEachPlay: 0
+    SkipNextStop: 0
+  - Clip: {fileID: 8300000, guid: af3fdf90e449f4a4cabfb1249e4f5eb7, type: 3}
+    Name: Caja
+    Volume: 1
+    Pitch: 2
+    Loop: 0
+    CreateNewInstanceOnEachPlay: 0
+    SkipNextStop: 0
+  - Clip: {fileID: 8300000, guid: ad282ff1d97e39d4aac4ca1ec2e48794, type: 3}
+    Name: Martillo
+    Volume: 1
+    Pitch: 2
+    Loop: 0
+    CreateNewInstanceOnEachPlay: 0
+    SkipNextStop: 0
+  - Clip: {fileID: 8300000, guid: fa8cd5f586002544280d53d5589a0254, type: 3}
+    Name: Click1
+    Volume: 2
+    Pitch: 2
+    Loop: 0
+    CreateNewInstanceOnEachPlay: 0
+    SkipNextStop: 0
+  - Clip: {fileID: 8300000, guid: 3d4dc4f152684ab468e8c9d5c2cb89b9, type: 3}
+    Name: Click2
+    Volume: 0.25
+    Pitch: 2
+    Loop: 0
+    CreateNewInstanceOnEachPlay: 0
+    SkipNextStop: 0
+  - Clip: {fileID: 8300000, guid: 03e3d423fd2232e4fab0820b44f07fd8, type: 3}
+    Name: Lose
+    Volume: 1
+    Pitch: 1
+    Loop: 0
+    CreateNewInstanceOnEachPlay: 0
+    SkipNextStop: 0
+  - Clip: {fileID: 8300000, guid: 4b6d87ac58dbb7d48b5d30f94ac315e8, type: 3}
+    Name: Questionario
+    Volume: 1
+    Pitch: 1
+    Loop: 0
+    CreateNewInstanceOnEachPlay: 0
+    SkipNextStop: 0
+  - Clip: {fileID: 8300000, guid: 58a4538d812ff514f8d7816eef943a8f, type: 3}
+    Name: Ciudad
+    Volume: 1
+    Pitch: 1
+    Loop: 0
+    CreateNewInstanceOnEachPlay: 0
+    SkipNextStop: 0

@@ -20,8 +20,16 @@ public class Partida : MonoBehaviour
     [SerializeField] private int _maxCantidadDeIncidentes = 3;
     [SerializeField] private int _frecuenciaCuestionario = 3;
 
+    [SerializeField] private UnityEvent OnIniciarPartida;
     [SerializeField] private UnityEvent OnMapaCompletado;
     [SerializeField] private UnityEvent OnPartidaTerminada;
+
+    [SerializeField] private UnityEvent OnNuevoDia;
+    [SerializeField] private UnityEvent OnNuevaCiudad;
+    [SerializeField] private UnityEvent OnViajeSeguro;
+    [SerializeField] private UnityEvent OnIncidente;
+    [SerializeField] private UnityEvent OnComprarHerramienta;
+    [SerializeField] private UnityEvent OnRecompensa;
 
     [SerializeField] private TMP_Text Texto_Dias;
     [SerializeField] private TMP_Text Texto_Puntos;
@@ -50,8 +58,8 @@ public class Partida : MonoBehaviour
 
     private Herramienta _herramienta;
     private int _dia;
-    private bool Pausa = true;
-    private bool Transitando;
+    private bool _pausa = true;
+    private bool _transitando;
     private int _puntos = 100;
     private int _incidentes;
     private int _seguridad;
@@ -61,20 +69,21 @@ public class Partida : MonoBehaviour
     private int _seguridadTotal;
 
     private Bloque _origen;
+    private Vehiculo _vehiculoActual;
 
     private void Awake() { _cuestionario.Inicializar(); }
     private void Update()
     {
-        if (Transitando) { return; }
-        if (Pausa) { return; }
+        if (_pausa) { return; }
+        if (_transitando) { return; }
 
         if (Input.GetMouseButtonDown(0)) { CrearHerramienta(); }
     }
 
     public void IniciarPartida()
     {
-        Pausa = false;
-        Transitando = false;
+        _pausa = false;
+        _transitando = false;
         _dia = 0;
         _puntos = _puntosIniciales;
         _incidentes = 0;
@@ -91,33 +100,39 @@ public class Partida : MonoBehaviour
         ActualizarTextos();
         _origen = _ciudad.ObtenerCalleAleatoria();
         MarcadorDeOrigen.Posicionar(_origen);
+
+        if (_vehiculoActual != null) { Destroy(_vehiculoActual); }
+
+        OnIniciarPartida?.Invoke();
     }
     public void CrearNuevoMapa()
     {
-        Pausa = false;
-        Transitando = false;
+        _pausa = false;
+        _transitando = false;
         _seguridad = 0;
         _ciudad.CrearCiudad();
         ActualizarTextos();
         _origen = _ciudad.ObtenerCalleAleatoria();
         MarcadorDeOrigen.Posicionar(_origen);
+        OnNuevaCiudad?.Invoke();
     }
     public void NuevoDía()
     {
-        if (Transitando) { return; }
-        if (Pausa) { return; }
+        if (_pausa) { return; }
+        if (_transitando) { return; }
 
         _dia++;
         
         if (_vehiculo == null) { print("No hay vehiculo"); return; }
-        Vehiculo vehiculo = Instantiate(_vehiculo, transform.position, transform.rotation, transform);
-        vehiculo.TransitarRuta(_ciudad.CrearRuta(_origen), VerificarRecorrido);
+        _vehiculoActual = Instantiate(_vehiculo, transform.position, transform.rotation, transform);
+        _vehiculoActual.TransitarRuta(_ciudad.CrearRuta(_origen), VerificarRecorrido);
+        OnNuevoDia?.Invoke();
 
         ActualizarTextos();
-        Transitando = true;
+        _transitando = true;
     }
-    public void SetHerramienta(Herramienta herramienta) { if (Pausa) { return; } _herramienta = herramienta; }
-    public void SetNulo() { if (Pausa) { return; } _herramienta = null; }
+    public void SetHerramienta(Herramienta herramienta) { if (_pausa) { return; } _herramienta = herramienta; }
+    public void SetNulo() { if (_pausa) { return; } _herramienta = null; }
     public void RespuestaCorrecta(Vector3 posicion)
     {
         int reduccion = ReducirIncidentes(_incidentesPorCuestionario);
@@ -128,6 +143,32 @@ public class Partida : MonoBehaviour
             BonoPopUp.GetInstance(posicion, $"${_bonoPorCuestionario}"); 
         }
         ActualizarTextos();
+    }
+
+    public void PausarPartida() 
+    {
+        _pausa = true;
+        if (_vehiculoActual != null) { _vehiculoActual.Pausar(); }
+    }
+    public void ReanudarPartida() 
+    {
+        _pausa = false;
+        if (_vehiculoActual != null) { _vehiculoActual.Reanudar(); }
+    }
+    public void TerminarPartida() 
+    {
+        _pausa = true;
+        if (_vehiculoActual != null) { Destroy(_vehiculoActual); }
+        OnPartidaTerminada?.Invoke();
+    }
+    public void Salir() { Application.Quit(); }
+
+    public void RecibirRecompensa(int puntosGanados) 
+    {
+        _puntos += puntosGanados;
+        BonoPopUp.GetInstance($"${puntosGanados}");
+        ActualizarTextos();
+        OnRecompensa?.Invoke();
     }
 
     public void ActivarBotonCuestionario() { BotonNuevoDia.SetActive(false); BotonPregunta.SetActive(true); }
@@ -143,7 +184,7 @@ public class Partida : MonoBehaviour
     }
     private void VerificarRecorrido(Vehiculo vehiculo, bool llegoADestino) 
     {
-        Transitando = false;
+        _transitando = false;
         if (llegoADestino)
         {
             int puntosGanados = vehiculo.LongitudRuta * _multiplicadorDePuntosPorLongitud + _puntosMinimos;
@@ -158,7 +199,7 @@ public class Partida : MonoBehaviour
             if (_seguridad >= _maxCantidadDeSeguridad)
             {
                 _ciudad.SiguienteNivel();
-                Pausa = true;
+                _pausa = true;
 
                 if (_bonoPorCiudad != 0)
                 {
@@ -169,6 +210,7 @@ public class Partida : MonoBehaviour
                 OnMapaCompletado?.Invoke();
                 _seguridad = 0;
             }
+            OnViajeSeguro?.Invoke();
         }
         else
         {
@@ -176,12 +218,9 @@ public class Partida : MonoBehaviour
             _incidentesTotales++;
             IncidentePopUp.GetInstance(vehiculo.transform.position, "+1");
 
-            if (_incidentes >= _maxCantidadDeIncidentes)
-            {
-                Pausa = true;
-                OnPartidaTerminada?.Invoke();
-            }
-            if (_puntos < 0) { _puntos = 0; }
+            OnIncidente?.Invoke();
+
+            if (_incidentes >= _maxCantidadDeIncidentes) { TerminarPartida(); }
         }
 
         _diasDesdeUltimoCuestionario++;
@@ -240,6 +279,7 @@ public class Partida : MonoBehaviour
         ActualizarTextos();
 
         CostoPopUp.GetInstance(bloque.transform.position, $"${_herramienta.Costo}");
+        OnComprarHerramienta?.Invoke();
     }
     private void ActualizarTextos()
     {
