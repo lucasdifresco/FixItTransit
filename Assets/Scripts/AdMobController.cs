@@ -1,8 +1,8 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using GoogleMobileAds.Api;
+using TMPro;
 
 public class AdMobController : MonoBehaviour
 {
@@ -16,7 +16,7 @@ public class AdMobController : MonoBehaviour
 #endif
     [SerializeField] private float TiempoDeCiclo;
     [SerializeField] private GameObject BottonAdd;
-
+    
     [SerializeField] private UnityEvent OnRewardOpen;
     [SerializeField] private UnityEvent OnReward;
     [SerializeField] private UnityEvent OnRewardFail;
@@ -26,6 +26,7 @@ public class AdMobController : MonoBehaviour
     private bool _contando = false;
     private bool _disponible = false;
     private bool _pausa = false;
+    private bool _reward = false;
 
 
     private void Start()
@@ -34,10 +35,16 @@ public class AdMobController : MonoBehaviour
     }
     private void Update()
     {
+        if (_reward) 
+        {
+            _reward = false;
+            BottonAdd.SetActive(false);
+            OnReward?.Invoke();
+        }
         if (_pausa) { return; }
         if (!_contando) { return; }
 
-        _tiempo += Time.unscaledDeltaTime;
+        _tiempo += Time.deltaTime;
         if (_tiempo >= TiempoDeCiclo) 
         {
             if (_disponible)
@@ -54,12 +61,7 @@ public class AdMobController : MonoBehaviour
     {
         if (_rewardedAd != null && _rewardedAd.CanShowAd())
         {
-            _rewardedAd.Show((Reward reward) => {
-                print(String.Format("Rewarded ad rewarded the user. Type: {0}, amount: {1}.", reward.Type, reward.Amount));
-                _contando = true;
-                BottonAdd.SetActive(false);
-                OnReward?.Invoke();
-            });
+            _rewardedAd.Show((Reward reward) => { print(String.Format("Rewarded ad rewarded the user. Type: {0}, amount: {1}.", reward.Type, reward.Amount)); });
         }
     }
     public void Pausar() { _pausa = true; }
@@ -88,23 +90,26 @@ public class AdMobController : MonoBehaviour
     }
     private void RegisterReloadHandler(RewardedAd ad)
     {
-        ad.OnAdFullScreenContentOpened += () => 
-        {
-            BottonAdd.SetActive(false);
-            OnRewardOpen?.Invoke(); 
-        };
         ad.OnAdFullScreenContentClosed += () => 
-        { 
+        {
+            _contando = true;
             _disponible = false; 
             LoadRewardedAd();
         };
         ad.OnAdFullScreenContentFailed += (AdError error) => 
         {
             print($"Rewarded ad failed to open full screen content with error : {error}");
-            _disponible = false;
             _contando = true;
+            _disponible = false;
             LoadRewardedAd(); 
             OnRewardFail?.Invoke();
+        };
+        ad.OnAdImpressionRecorded += () => 
+        {
+            _reward = true; 
+            _contando = false;
+            _disponible = false;
+            BottonAdd.SetActive(false);
         };
     }
     private void OnDestroy()
