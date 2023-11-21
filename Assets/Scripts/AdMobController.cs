@@ -2,7 +2,6 @@ using System;
 using UnityEngine;
 using UnityEngine.Events;
 using GoogleMobileAds.Api;
-using TMPro;
 
 public class AdMobController : MonoBehaviour
 {
